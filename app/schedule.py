@@ -25,15 +25,14 @@ def process_video_in_real_time(video_path):
     segment_base_name = "segment_%05d.ts"
     playlist_path = os.path.join(HLS_OUTPUT_DIR, "cuaima_tv.m3u8")
 
-    # Configuración del pipeline de GStreamer
+    # Configuración del pipeline de GStreamer sin la propiedad 'async'
     pipeline = (
         f"gst-launch-1.0 filesrc location={video_path} ! decodebin name=dec "
         f"dec. ! queue ! audioconvert ! audioresample ! avenc_aac ! queue ! mux. "
         f"dec. ! queue ! videoconvert ! x264enc bitrate=3000 speed-preset=veryfast tune=zerolatency key-int-max=50 ! mux. "
         f"mpegtsmux name=mux ! hlssink location={HLS_OUTPUT_DIR}/{segment_base_name} "
         f"playlist-location={playlist_path} "
-        f"target-duration={SEGMENT_DURATION} max-files={PLAYLIST_LENGTH} playlist-length={PLAYLIST_LENGTH} "
-        f"async=false"
+        f"target-duration={SEGMENT_DURATION} max-files={PLAYLIST_LENGTH} playlist-length={PLAYLIST_LENGTH}"
     )
 
     logging.debug(f"Ejecutando pipeline: {pipeline}")
