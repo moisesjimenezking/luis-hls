@@ -25,7 +25,7 @@ docker remove $IMAGE_NAME
 # Iniciar el contenedor
 docker run -d \
   --name $CONTAINER_NAME \
-  --network host \  # Cambia aquí para usar la red host
+  --network host \
   -v "$HOST_VIDEO_DIR:/app/videos:rw" \
   -v "$HOST_HLS_OUTPUT_DIR:/app/hls_output:rw" \
   $IMAGE_NAME
