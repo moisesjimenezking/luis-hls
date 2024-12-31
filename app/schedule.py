@@ -14,38 +14,22 @@ VIDEOS_DIR = "/app/videos"
 HLS_OUTPUT_DIR = "/app/hls_output"
 
 # Configuración de HLS
-SEGMENT_DURATION = 5  # Duración de cada segmento (segundos)
-PLAYLIST_LENGTH = 3  # Número de segmentos a mantener en la lista de reproducción
-WAIT_TIME = 3  # Tiempo de espera entre segmentos para sincronizar con la duración
-
-def get_video_id(video_path):
-    """
-    Genera un identificador único basado en el nombre del archivo de video.
-    """
-    return os.path.splitext(os.path.basename(video_path))[0]
-
-def video_segments_exist(video_id):
-    """
-    Comprueba si los segmentos para un video ya existen.
-    """
-    playlist_path = os.path.join(HLS_OUTPUT_DIR, f"{video_id}.m3u8")
-    return os.path.exists(playlist_path)
+SEGMENT_DURATION = 10  # Duración de cada segmento
+PLAYLIST_LENGTH = 5  # Número de segmentos a mantener en memoria
+WAIT_TIME = 7  # Tiempo de espera entre segmentos para sincronizar con la duración
 
 def process_video_in_real_time(video_path):
     """
     Procesa un video con GStreamer para generar HLS de forma continua en tiempo real.
     """
-    video_id = get_video_id(video_path)
-    segment_base_name = f"{video_id}_segment_%05d.ts"
-    playlist_path = os.path.join(HLS_OUTPUT_DIR, f"{video_id}.m3u8")
+    segment_base_name = "segment_%05d.ts"
+    playlist_path = os.path.join(HLS_OUTPUT_DIR, "cuaima_tv.m3u8")
 
-    # Configuración del pipeline de GStreamer
+    # Configuración del pipeline de GStreamer sin la propiedad 'async'
     pipeline = (
         f"gst-launch-1.0 filesrc location={video_path} ! decodebin name=dec "
-        f"dec. ! queue max-size-buffers=0 max-size-time=0 max-size-bytes=0 ! audioconvert ! audioresample ! "
-        f"avenc_aac ! queue max-size-buffers=0 max-size-time=0 max-size-bytes=0 ! mux. "
-        f"dec. ! queue max-size-buffers=0 max-size-time=0 max-size-bytes=0 ! videoconvert ! x264enc bitrate=3000 "
-        f"speed-preset=ultrafast tune=zerolatency key-int-max=30 ! mux. "
+        f"dec. ! queue ! audioconvert ! audioresample ! avenc_aac ! queue ! mux. "
+        f"dec. ! queue ! videoconvert ! x264enc bitrate=3000 speed-preset=veryfast tune=zerolatency key-int-max=50 ! mux. "
         f"mpegtsmux name=mux ! hlssink location={HLS_OUTPUT_DIR}/{segment_base_name} "
         f"playlist-location={playlist_path} "
         f"target-duration={SEGMENT_DURATION} max-files={PLAYLIST_LENGTH} playlist-length={PLAYLIST_LENGTH}"
@@ -75,27 +59,27 @@ def cleanup_old_segments():
     """
     Elimina fragmentos antiguos que no están en la lista de reproducción actual.
     """
-    for playlist_file in os.listdir(HLS_OUTPUT_DIR):
-        if playlist_file.endswith(".m3u8"):
-            video_id = playlist_file.split(".")[0]
-            playlist_path = os.path.join(HLS_OUTPUT_DIR, playlist_file)
+    playlist_path = os.path.join(HLS_OUTPUT_DIR, "cuaima_tv.m3u8")
+    if not os.path.exists(playlist_path):
+        logging.warning("No se encontró la lista de reproducción para limpiar.")
+        return
 
-            # Leer los segmentos actuales en la lista de reproducción
-            with open(playlist_path, "r") as playlist:
-                lines = playlist.readlines()
-                current_segments = [
-                    line.strip() for line in lines if not line.startswith("#") and line.strip()
-                ]
+    # Leer los segmentos actuales en la lista de reproducción
+    with open(playlist_path, "r") as playlist:
+        lines = playlist.readlines()
+        current_segments = [
+            line.strip() for line in lines if not line.startswith("#") and line.strip()
+        ]
 
-            # Eliminar segmentos que no estén en la lista actual
-            for file in os.listdir(HLS_OUTPUT_DIR):
-                if file.endswith(".ts") and file.startswith(video_id) and file not in current_segments:
-                    file_path = os.path.join(HLS_OUTPUT_DIR, file)
-                    try:
-                        os.remove(file_path)
-                        logging.debug(f"Eliminado segmento obsoleto: {file_path}")
-                    except Exception as e:
-                        logging.error(f"No se pudo eliminar el archivo {file_path}: {e}")
+    # Eliminar segmentos que no estén en la lista actual
+    for file in os.listdir(HLS_OUTPUT_DIR):
+        if file.endswith(".ts") and file not in current_segments:
+            file_path = os.path.join(HLS_OUTPUT_DIR, file)
+            try:
+                os.remove(file_path)
+                logging.debug(f"Eliminado segmento obsoleto: {file_path}")
+            except Exception as e:
+                logging.error(f"No se pudo eliminar el archivo {file_path}: {e}")
 
 
 def play_videos_in_order():
@@ -111,13 +95,8 @@ def play_videos_in_order():
     for video_file in video_playlist:
         video_path = os.path.join(VIDEOS_DIR, video_file)
         if os.path.exists(video_path):
-            video_id = get_video_id(video_path)
-
-            if video_segments_exist(video_id):
-                logging.debug(f"Segmentos para {video_file} ya existen. Saltando procesamiento.")
-            else:
-                logging.debug(f"Iniciando procesamiento en tiempo real para: {video_file}")
-                process_video_in_real_time(video_path)
+            logging.debug(f"Iniciando procesamiento en tiempo real para: {video_file}")
+            process_video_in_real_time(video_path)
             cleanup_old_segments()
         else:
             logging.error(f"El archivo {video_file} no existe en {VIDEOS_DIR}.")
