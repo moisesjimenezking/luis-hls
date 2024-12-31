@@ -25,10 +25,11 @@ docker remove $IMAGE_NAME
 # Iniciar el contenedor
 docker run -d \
   --name $CONTAINER_NAME \
-  -p 2001:5000 \
+  --network host \  # Cambia aquí para usar la red host
   -v "$HOST_VIDEO_DIR:/app/videos:rw" \
   -v "$HOST_HLS_OUTPUT_DIR:/app/hls_output:rw" \
   $IMAGE_NAME
+
 
 # Confirmación
 if [ $? -eq 0 ]; then
