@@ -1,5 +1,4 @@
 import os
-import shutil
 import subprocess
 import logging
 
@@ -7,29 +6,15 @@ logging.basicConfig(level=logging.DEBUG)
 
 VIDEOS_DIR = "/app/videos"
 HLS_OUTPUT_DIR = "/app/hls_output"
-SEGMENT_COUNTER = 0  # Contador global para los segmentos
-PLAYLIST_SEQUENCE = 0  # Secuencia global para mantener la lista sincronizada
 
-
-import os
-import subprocess
-import logging
-import shutil
-
-logging.basicConfig(level=logging.DEBUG)
-
-VIDEOS_DIR = "/app/videos"
-HLS_OUTPUT_DIR = "/app/hls_output"
-SEGMENT_COUNTER = 0  # Contador para mantener continuidad en los segmentos
+# Configuración de segmentos (ajustables)
+SEGMENT_DURATION = 10
+PLAYLIST_LENGTH = 5  # Mantener los últimos 5 segmentos en memoria
 
 
 def process_video(video_path):
-    """Procesar un video con GStreamer para generar HLS"""
-    global SEGMENT_COUNTER
-
-    # Nombre base para los segmentos
-    segment_base_name = f"segment_%05d.ts"
-    playlist_aux_path = os.path.join(HLS_OUTPUT_DIR, "playlist-aux.m3u8")
+    """Procesa un video con GStreamer para generar HLS sin acumulación de fragmentos."""
+    segment_base_name = "segment_%05d.ts"
     playlist_path = os.path.join(HLS_OUTPUT_DIR, "playlist.m3u8")
 
     # Configuración del pipeline
@@ -38,56 +23,46 @@ def process_video(video_path):
         f"dec. ! queue ! audioconvert ! audioresample ! avenc_aac ! queue ! mux. "
         f"dec. ! queue ! videoconvert ! x264enc bitrate=5000 speed-preset=veryfast tune=zerolatency ! mux. "
         f"mpegtsmux name=mux ! hlssink location={HLS_OUTPUT_DIR}/{segment_base_name} "
-        f"playlist-location={playlist_aux_path} target-duration=10 max-files=0 playlist-length=0"
+        f"playlist-location={playlist_path} "
+        f"target-duration={SEGMENT_DURATION} max-files={PLAYLIST_LENGTH} playlist-length={PLAYLIST_LENGTH}"
     )
 
     logging.debug(f"Ejecutando pipeline: {pipeline}")
     process = subprocess.Popen(pipeline, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = process.communicate()
-    logging.debug(f"Pipeline stdout: {stdout.decode()}")
-    logging.error(f"Pipeline stderr: {stderr.decode()}")
-
-    # Fusionar la lista de reproducción auxiliar con la principal
-    if process.returncode == 0 and os.path.exists(playlist_aux_path):
-        merge_playlists(playlist_aux_path, playlist_path)
+    if process.returncode != 0:
+        logging.error(f"Error en el pipeline de GStreamer: {stderr.decode()}")
+    else:
+        logging.debug(f"Pipeline completado: {stdout.decode()}")
 
 
-def merge_playlists(aux_playlist_path, global_playlist_path):
-    """Combinar listas de reproducción y renombrar segmentos para continuidad"""
-    global SEGMENT_COUNTER
-
-    if not os.path.exists(aux_playlist_path):
-        logging.error(f"No se encontró la lista auxiliar: {aux_playlist_path}")
+def cleanup_old_segments():
+    """Elimina fragmentos antiguos que no están en la lista de reproducción."""
+    playlist_path = os.path.join(HLS_OUTPUT_DIR, "playlist.m3u8")
+    if not os.path.exists(playlist_path):
+        logging.warning("No se encontró la lista de reproducción para limpiar.")
         return
 
-    # Crear la lista global si no existe
-    if not os.path.exists(global_playlist_path):
-        with open(global_playlist_path, "w") as global_playlist:
-            global_playlist.write("#EXTM3U\n")
-            global_playlist.write("#EXT-X-VERSION:3\n")
-            global_playlist.write("#EXT-X-TARGETDURATION:10\n")
-            global_playlist.write("#EXT-X-MEDIA-SEQUENCE:0\n")
+    # Leer segmentos actuales en la lista de reproducción
+    with open(playlist_path, "r") as playlist:
+        lines = playlist.readlines()
+        current_segments = [
+            line.strip() for line in lines if not line.startswith("#") and line.strip()
+        ]
 
-    with open(aux_playlist_path, "r") as aux_playlist, open(global_playlist_path, "a") as global_playlist:
-        for line in aux_playlist:
-            if line.startswith("#EXTINF") or line.startswith("#EXT-X-ENDLIST"):
-                global_playlist.write(line)
-            elif not line.startswith("#") and line.strip():
-                segment_name = line.strip()
-                new_segment_name = f"segment_{SEGMENT_COUNTER:05d}.ts"
-                segment_path = os.path.join(HLS_OUTPUT_DIR, segment_name)
-                new_segment_path = os.path.join(HLS_OUTPUT_DIR, new_segment_name)
-
-                # Renombrar el segmento
-                if os.path.exists(segment_path):
-                    shutil.move(segment_path, new_segment_path)
-                    global_playlist.write(new_segment_name + "\n")
-                    SEGMENT_COUNTER += 1
-
+    # Eliminar segmentos que no estén en la lista actual
+    for file in os.listdir(HLS_OUTPUT_DIR):
+        if file.endswith(".ts") and file not in current_segments:
+            file_path = os.path.join(HLS_OUTPUT_DIR, file)
+            try:
+                os.remove(file_path)
+                logging.debug(f"Eliminado segmento obsoleto: {file_path}")
+            except Exception as e:
+                logging.error(f"No se pudo eliminar el archivo {file_path}: {e}")
 
 
 def play_videos_in_order():
-    """Reproducir los videos en el orden definido de forma continua"""
+    """Procesa videos en orden continuo y mantiene la limpieza de fragmentos."""
     video_playlist = [
         "11FIT.mp4",
         "12FIT.mp4",
@@ -100,6 +75,7 @@ def play_videos_in_order():
             if os.path.exists(video_path):
                 logging.debug(f"Procesando video: {video_file}")
                 process_video(video_path)
+                cleanup_old_segments()
             else:
                 logging.error(f"El archivo {video_file} no existe en {VIDEOS_DIR}.")
         logging.debug("Lista de reproducción completa. Reiniciando ciclo.")

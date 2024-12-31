@@ -16,7 +16,7 @@ COPY app /app
 RUN pip install -r requirements.txt
 
 # Exponer el puerto
-EXPOSE 5003
+EXPOSE 2001
 
 # Comando de inicio
 CMD ["sh", "-c", "python app.py & python schedule.py"]

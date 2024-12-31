@@ -25,7 +25,7 @@ docker remove $IMAGE_NAME
 # Iniciar el contenedor
 docker run -d \
   --name $CONTAINER_NAME \
-  -p 5003:5000 \
+  -p 2001:5000 \
   -v "$HOST_VIDEO_DIR:/app/videos:rw" \
   -v "$HOST_HLS_OUTPUT_DIR:/app/hls_output:rw" \
   $IMAGE_NAME
