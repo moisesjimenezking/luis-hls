@@ -15,7 +15,7 @@ PLAYLIST_LENGTH = 5  # Mantener los últimos 5 segmentos en memoria
 def process_video(video_path):
     """Procesa un video con GStreamer para generar HLS sin acumulación de fragmentos."""
     segment_base_name = "segment_%05d.ts"
-    playlist_path = os.path.join(HLS_OUTPUT_DIR, "playlist.m3u8")
+    playlist_path = os.path.join(HLS_OUTPUT_DIR, "cuaima_tv.m3u8")
 
     # Configuración del pipeline
     pipeline = (
@@ -38,7 +38,7 @@ def process_video(video_path):
 
 def cleanup_old_segments():
     """Elimina fragmentos antiguos que no están en la lista de reproducción."""
-    playlist_path = os.path.join(HLS_OUTPUT_DIR, "playlist.m3u8")
+    playlist_path = os.path.join(HLS_OUTPUT_DIR, "cuaima_tv.m3u8")
     if not os.path.exists(playlist_path):
         logging.warning("No se encontró la lista de reproducción para limpiar.")
         return
