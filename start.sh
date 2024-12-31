@@ -3,8 +3,8 @@
 # Variables configurables
 CONTAINER_NAME="flask_hls_streaming"
 IMAGE_NAME="flask_hls_streaming"
-HOST_VIDEO_DIR="/home/moises/Documentos/proyectos/trabajo/videos"    # Cambia esto a la ruta donde tienes tus videos en el host
-HOST_HLS_OUTPUT_DIR="/home/moises/Documentos/proyectos/trabajo/hls" # Cambia esto a la ruta donde deseas guardar los archivos HLS
+HOST_VIDEO_DIR= "/mnt/d/CuaimaTeam/videos" # "/home/moises/Documentos/proyectos/trabajo/videos"    # Cambia esto a la ruta donde tienes tus videos en el host
+HOST_HLS_OUTPUT_DIR= "/mnt/d/CuaimaTeam/hls" #"/home/moises/Documentos/proyectos/trabajo/hls" # Cambia esto a la ruta donde deseas guardar los archivos HLS
 
 # Verifica que los directorios existan
 if [ ! -d "$HOST_VIDEO_DIR" ]; then
