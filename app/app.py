@@ -20,7 +20,7 @@ def serve_epg():
 def home():
     return jsonify({
         "message": "HLS Streaming Server",
-        "hls_url": "/hls/playlist.m3u8",
+        "hls_url": "/hls/cuaima_tv.m3u8",
         "epg_url": "/epg"
     })
 

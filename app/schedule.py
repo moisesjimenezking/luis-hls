@@ -1,6 +1,7 @@
 import os
 import subprocess
 import logging
+import time
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -70,6 +71,7 @@ def play_videos_in_order():
     os.makedirs(HLS_OUTPUT_DIR, exist_ok=True)
 
     while True:
+        time.sleep(3)
         for video_file in video_playlist:
             video_path = os.path.join(VIDEOS_DIR, video_file)
             if os.path.exists(video_path):
