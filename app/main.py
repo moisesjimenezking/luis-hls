@@ -37,7 +37,7 @@ def stream_videos():
                     "-hls_list_size", str(PLAYLIST_LENGTH),
                     "-hls_flags", "independent_segments+delete_segments",
                     "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
-                    os.path.join(HLS_OUTPUT_DIR, "playlist.m3u8")
+                    os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
                 ]
 
                 # Ejecutar FFmpeg
