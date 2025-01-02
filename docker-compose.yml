@@ -6,8 +6,8 @@ services:
       context: .
     network_mode: "host"  # Usar la red del host para menor latencia
     volumes:
-      - ./app/videos:/app/videos
-      - ./app/hls_output:/app/hls_output
+      - /mnt/d/CuaimaTeam/videos:/app/videos
+      - /mnt/d/CuaimaTeam/hls:/app/hls_output
 
   nginx:
     container_name: server
@@ -15,4 +15,4 @@ services:
     network_mode: "host"  # NGINX también usa la red del host
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./app/hls_output:/app/hls_output
+      - /mnt/d/CuaimaTeam/hls:/app/hls_output
