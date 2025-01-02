@@ -16,7 +16,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - /mnt/d/CuaimaTeam/hls:/app/hls_output
-    entrypoint: ["sh", "-c", "lsof -t -i:2001 | xargs -r kill -9 && nginx -g 'daemon off;'"]
+    # entrypoint: ["sh", "-c", "lsof -t -i:2001 | xargs -r kill -9 && nginx -g 'daemon off;'"]
 
 x-scripts:
   pre-up:
