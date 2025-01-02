@@ -2,13 +2,12 @@
 
 PORT=2001
 
-# Buscar el proceso que está usando el puerto
-PID=$(lsof -t -i:$PORT)
+echo "Verificando si el puerto $PORT está en uso..."
+while lsof -i :$PORT &>/dev/null; do
+    PID=$(lsof -t -i:$PORT)
+    echo "El puerto $PORT está en uso por el proceso $PID. Deteniéndolo..."
+    kill -9 $PID
+    sleep 1
+done
 
-if [ -n "$PID" ]; then
-  echo "El puerto $PORT está en uso por el proceso $PID. Deteniéndolo..."
-  kill -9 $PID
-  echo "Puerto $PORT liberado."
-else
-  echo "El puerto $PORT está libre."
-fi
+echo "El puerto $PORT está libre."
