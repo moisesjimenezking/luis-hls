@@ -7,8 +7,8 @@ from flask import Flask, jsonify
 app = Flask(__name__)
 
 # Directorios de configuración
-VIDEOS_DIR = "./app/videos"
-HLS_OUTPUT_DIR = "./app/hls_output"
+VIDEOS_DIR = "./videos"
+HLS_OUTPUT_DIR = "./hls_output"
 
 # Configuración HLS
 SEGMENT_DURATION = 4  # Duración de cada segmento HLS (en segundos)
