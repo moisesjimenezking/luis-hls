@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   app:
-    name: api
+    container_name: api
     build:
       context: .
     network_mode: "host"  # Usar la red del host para menor latencia
@@ -10,7 +10,7 @@ services:
       - ./app/hls_output:/app/hls_output
 
   nginx:
-    name: server
+    container_name: server
     image: nginx:alpine
     network_mode: "host"  # NGINX también usa la red del host
     volumes:
