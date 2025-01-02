@@ -1,13 +1,16 @@
 #!/bin/bash
 
 PORT=2001
+PROCESS=$(lsof -t -i:$PORT)
 
-echo "Verificando si el puerto $PORT está en uso..."
-while lsof -i :$PORT &>/dev/null; do
-    PID=$(lsof -t -i:$PORT)
-    echo "El puerto $PORT está en uso por el proceso $PID. Deteniéndolo..."
-    kill -9 $PID
-    sleep 1
-done
-
-echo "El puerto $PORT está libre."
+if [ -z "$PROCESS" ]; then
+  echo "El puerto $PORT está libre."
+else
+  echo "El puerto $PORT está en uso por el proceso $PROCESS. Deteniéndolo..."
+  kill -9 $PROCESS
+  if [ $? -eq 0 ]; then
+    echo "Proceso detenido con éxito."
+  else
+    echo "Error al intentar detener el proceso."
+  fi
+fi
