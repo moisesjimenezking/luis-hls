@@ -48,19 +48,39 @@ def stream_videos():
         else:
             time.sleep(1)  # Esperar un segundo antes de verificar la cola nuevamente
 
+# @app.route("/api/start", methods=["GET"])
+# def start_stream():
+#     """Inicia la transmisión al llenar la cola con todos los videos disponibles."""
+#     global video_queue
+
+
+#     videos = [f for f in os.listdir(VIDEOS_DIR) if f.endswith(".mp4")]
+#     if not videos:
+#         return jsonify({"error": "No videos found in the directory."}), 404
+
+#     # Agregar los videos a la cola
+#     video_queue.extend(videos)
+#     return jsonify({"message": "Streaming started for all videos in the queue."})
+
 @app.route("/api/start", methods=["GET"])
 def start_stream():
-    """Inicia la transmisión al llenar la cola con todos los videos disponibles."""
+    """Inicia la transmisión siguiendo la secuencia predefinida."""
     global video_queue
-
+    
     # Obtener todos los videos disponibles
-    videos = [f for f in os.listdir(VIDEOS_DIR) if f.endswith(".mp4")]
-    if not videos:
-        return jsonify({"error": "No videos found in the directory."}), 404
+    secuencia = ['CC T1 EP 1.mp4', '1AV.MP4', 'CC T2 EP 1.mp4', '40BB', 'C PE 1.mp4', '1BINT', 'CC T1 EP 2.mp4', '2AV.MP4', 'CC T2 EP 2.mp4', '3BB', 'C PE 2.mp4', '32FIT.mp4', '2FIT.mp4', '17FIT.mp4', 'CC T1 EP 3.mp4', '3AV.MP4', 'CC T2 EP 3.mp4', '4BB', 'C PE 3.mp4', '3BINT', 'MC3', '3FIT.mp4', '33FIT.mp4', '18FIT.mp4', 'CC T1 EP 4.mp4', '4AV.MP4', 'CC T2 EP 4.mp4', '5BB', '4FIT.mp4', '54BINT', '19FIT.mp4', '4BINT', 'CC T1 EP 5.mp4', '5AV.MP4', 'CC T2 EP 5.mp4', '8BB', '5FIT.mp4', '55BINT', '35FIT.mp4', '28BB', 'CC T1 EP 6.mp4', '6AV.MP4', 'CC T2 EP 6.mp4', '9BB', '6FIT.mp4', '56BINT', '36FIT.mp4', '21FIT.mp4', '8BINT', 'CC T1 EP 7.mp4', '7AV.MP4', 'CC T2 EP 7.mp4', '12BB', '1OFEC', '22FIT.mp4', '37FIT.mp4', '57BINT', 'CC T1 EP 8.mp4', '8AV.MP4', 'CC T2 EP 8.mp4', '13BB', '8FIT.mp4', '38FIT.mp4', '58BINT', '23FIT.mp4', '10BINT', 'CC T1 EP 9.mp4', '1AV.MP4', 'CC T2 EP 9.mp4', '16BB', '39FIT.mp4', '59BINT', '9FIT.mp4', '24FIT.mp4', 'CC T1 EP 10.mp4', '2AV.MP4', 'CC T2 EP 10.mp4', '2BB', '10FIT.mp4', '60BINT', '25FIT.mp4', '20BB', 'CC T1 EP 11.mp4', '3AV.MP4', 'CC T2 EP 11.mp4', '22BB', '11FIT.mp4', '41FIT.mp4', '61BINT', '26FIT.mp4', '39BB', 'CC T1 EP 12.mp4', 'CC T2 EP 12.mp4', '4AV.MP4', '50BB', '12FIT.mp4', '62BINT', 'MC1', '27FIT.mp4', '23BB', 'CC T1 EP 13.mp4', '5AV.MP4', 'CC T2 EP 13.mp4', '24BB', '13FIT.mp4', '43FIT.mp4', '28FIT.mp4', '63BINT', 'MC2', '16BINT', 'CC T1 EP 14.mp4', '6AV.MP4', 'CC T2 EP 14.mp4', '28BB', '64BINT', '44FIT.mp4', '1OFEC', 'MC3', '17BINT', 'CC T1 EP 15 .mp4', '7AV.MP4', 'CC T2 EP 15.mp4', '30BB', '65BINT', '30FIT.mp4', '21BINT', 'CC T1 EP 16 .mp4', '8AV.MP4', 'CC T2 EP 15.mp4', '31BB', '16FIT.mp4', '51BINT', '1FIT.mp4', '22BINT', 'CC T1 EP 1.mp4', '1AV.MP4', 'CC T2 EP 1.mp4', '31FIT.mp4', '34BB', '17FIT.mp4', '52BINT', '2FIT.mp4', '32FIT.mp4', 'CC T1 EP 2.mp4', '2AV.MP4', 'CC T2 EP 2.mp4', '18FIT.mp4', '37BB', '3FIT.mp4', '53BINT', '33FIT.mp4', '24BINT', 'CC T1 EP 3.mp4', '3AV.MP4', 'CC T2 EP 3.mp4', '2BB', '4FIT.mp4', '54BINT', '34FIT.mp4', '19FIT.mp4', '45FIT.mp4', 'CC T1 EP 4.mp4', '4AV.MP4', 'CC T2 EP 4.mp4', '5FIT.mp4', '39BB', '35FIT.mp4', '55BINT', '20FIT.mp4', '14FIT.mp4', '44FIT.mp4', 'MC3', 'CC T1 EP 5.mp4', '5AV.MP4', 'CC T2 EP 5.mp4', '21FIT.mp4', '50BB', '1OFEC', 'MC1', '6FIT.mp4', '56BINT', '24BINT', '36FIT.mp4', '2OFEC', 'CC T1 EP 6.mp4', '6AV.MP4', 'CC T2 EP 6.mp4', '22FIT.mp4', '40BB', 'MC2', '2BINT', '7FIT.mp4', '37FIT.mp4', '30FIT.mp4', '29FIT.mp4', 'CC T1 EP 7.mp4', '7AV.MP4', 'CC T2 EP 7.mp4', '23FIT.mp4', 'MC3', '3BINT', '8FIT.mp4', '58BINT', '38FIT.mp4', 'CC T1 EP 8.mp4', '8AV.MP4', 'CC T2 EP 8.mp4', '24FIT.mp4', '4BB', '9FIT.mp4', '4BINT', '59BINT', 'CC T1 EP 9.mp4', '1AV.MP4', 'CC T2 EP 9.mp4', '60BINT', '39FIT.mp4', '10FIT.mp4', '40FIT.mp4', '5BINT', 'CC T1 EP 10.mp4', '2AV.MP4', 'CC T2 EP 10.mp4', '25FIT.mp4', '8BB', '26FIT.mp4', '8BINT', '11FIT.mp4', '61BINT', '41FIT.mp4', 'CC T1 EP 11.mp4', '3AV.MP4', 'CC T2 EP 11.mp4', '27FIT.mp4', '9BB', '9BINT', '62BINT', '42FIT.mp4', 'CC T1 EP 12.mp4', '4AV.MP4', 'CC T2 EP 12.mp4', '28FIT.mp4', '12BB', 'MC2', '43FIT.mp4', 'MC1', '13FIT.mp4', '63BINT', '12FIT.mp4', '1OFEC', '2OFEC', 'CC T1 EP 13.mp4', '6AV.MP4', 'CC T1 EP 14.mp4', 'CC T2 EP 13.mp4', '13BB', '5AV.MP4', 'CC T1 EP 15 .mp4', '7AV.MP4', 'CC T1 EP 16 .mp4', 'CC T2 EP 14.mp4', '16BB', '8AV.MP4']
+    
+    # Obtener los videos realmente disponibles en el directorio
+    videos_disponibles = set(f for f in os.listdir(VIDEOS_DIR) if f.endswith(".mp4"))
 
-    # Agregar los videos a la cola
-    video_queue.extend(videos)
-    return jsonify({"message": "Streaming started for all videos in the queue."})
+    # Crear una lista ordenada solo con los archivos que existen en la carpeta
+    video_queue = [video for video in secuencia if video in videos_disponibles]
+
+    if not video_queue:
+        return jsonify({"error": "No videos found matching the predefined sequence."}), 404
+
+    return jsonify({"message": "Streaming started following the predefined sequence.", "videos": video_queue})
+
 
 @app.route("/api/videos", methods=["GET"])
 def list_videos():
