@@ -63,6 +63,7 @@ def start_stream():
     return jsonify({"message": "Streaming started for all videos in the queue."})
 
 @app.route("/videos", methods=["GET"])
+@app.route("/api/videos", methods=["GET"])
 def list_videos():
     """Devuelve la lista de videos disponibles en el directorio."""
     videos = [f for f in os.listdir(VIDEOS_DIR) if f.endswith(".mp4")]
