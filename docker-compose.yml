@@ -7,5 +7,5 @@ services:
       context: .
     network_mode: "host"
     volumes:
-      - ./app/videos:/app/videos:ro  # Solo lectura
+      - ./videos:/app/videos:ro  # Solo lectura
       - ./app/hls:/app/hls_output  # Carpeta de salida HLS
