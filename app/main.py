@@ -48,7 +48,7 @@ def stream_videos():
         else:
             time.sleep(1)  # Esperar un segundo antes de verificar la cola nuevamente
 
-@app.route("/start", methods=["GET"])
+@app.route("/api/start", methods=["GET"])
 def start_stream():
     """Inicia la transmisión al llenar la cola con todos los videos disponibles."""
     global video_queue
@@ -62,7 +62,6 @@ def start_stream():
     video_queue.extend(videos)
     return jsonify({"message": "Streaming started for all videos in the queue."})
 
-@app.route("/videos", methods=["GET"])
 @app.route("/api/videos", methods=["GET"])
 def list_videos():
     """Devuelve la lista de videos disponibles en el directorio."""
