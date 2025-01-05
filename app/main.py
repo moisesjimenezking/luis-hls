@@ -21,9 +21,6 @@ video_queue = []
 # Ruta del archivo XML dentro de 'app/public/'
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 XML_FILE = os.path.join(BASE_DIR, "app", "public", "epg.xml")
-
-# Ruta del archivo JSON dentro de 'app/public/'
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 JSON_FILE = os.path.join(BASE_DIR, "app", "public", "cuaimaTeam.json")
 
 def stream_videos():
