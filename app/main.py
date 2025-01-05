@@ -2,8 +2,11 @@ import os
 import subprocess
 import threading
 import time
+import logging
 from flask import Flask, Response, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
+
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 
@@ -137,6 +140,7 @@ def view_json():
     
     result = dict()
     for secuencia in json_content:
+        logging.debug(str(secuencia))
         if isinstance(secuencia, list):
             result.update({secuencia:[]})
             
