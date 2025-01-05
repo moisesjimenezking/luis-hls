@@ -2,7 +2,7 @@ import os
 import subprocess
 import threading
 import time
-from flask import Flask, jsonify
+from flask import Flask, jsonify,Response, send_file
 
 app = Flask(__name__)
 
@@ -16,6 +16,10 @@ PLAYLIST_LENGTH = 10   # Número de segmentos en la lista de reproducción
 
 # Cola de reproducción
 video_queue = []
+
+# Ruta del archivo XML dentro de 'app/public/'
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+XML_FILE = os.path.join(BASE_DIR, "app", "public", "epg.xml")
 
 def stream_videos():
     """Función para reproducir videos en cola secuencialmente."""
@@ -48,19 +52,17 @@ def stream_videos():
         else:
             time.sleep(1)  # Esperar un segundo antes de verificar la cola nuevamente
 
-# @app.route("/api/start", methods=["GET"])
-# def start_stream():
-#     """Inicia la transmisión al llenar la cola con todos los videos disponibles."""
-#     global video_queue
+@app.route("/api/view_epg")
+def view_epg():
+    """Devuelve el XML para verlo en el navegador."""
+    with open(XML_FILE, "r", encoding="utf-8") as f:
+        xml_content = f.read()
+    return Response(xml_content, mimetype="application/xml")
 
-
-#     videos = [f for f in os.listdir(VIDEOS_DIR) if f.endswith(".mp4")]
-#     if not videos:
-#         return jsonify({"error": "No videos found in the directory."}), 404
-
-#     # Agregar los videos a la cola
-#     video_queue.extend(videos)
-#     return jsonify({"message": "Streaming started for all videos in the queue."})
+@app.route("/api/download_epg")
+def download_epg():
+    """Permite descargar el archivo XML."""
+    return send_file(XML_FILE, as_attachment=True)
 
 @app.route("/api/start", methods=["GET"])
 def start_stream():
