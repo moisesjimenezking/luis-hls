@@ -12,7 +12,10 @@ WORKDIR /app
 COPY app/ /app
 
 # Instalar dependencias de Python
-RUN pip install --no-cache-dir flask
+COPY requirements.txt /app/requirements.txt
+
+# Instalar paquetes Python
+RUN pip install -r /app/requirements.txt
 
 # Exponer solo el puerto de Flask
 EXPOSE 5000
