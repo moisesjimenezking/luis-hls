@@ -3,6 +3,7 @@ import subprocess
 import threading
 import time
 import logging
+import json
 from flask import Flask, Response, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
 
@@ -136,8 +137,8 @@ def view_json():
         return jsonify({"error": "El archivo JSON no existe"}), 404
 
     with open(json_file, "r", encoding="utf-8") as f:
-        json_content = f.read()
-    
+        json_content = json.load(f)  # 🔹 Convertir a diccionario
+        
     result = dict()
 
     for secuencia, lista_videos in json_content.items():  # 🔹 Recorrer correctamente
