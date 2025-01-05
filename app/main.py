@@ -139,6 +139,9 @@ def view_json():
         json_content = f.read()
     
     result = dict()
+    logging.debug(str(json_content))
+    logging.debug(str(type(json_content)))
+    
     for secuencia in json_content:
         logging.debug(str(secuencia))
         if isinstance(secuencia, list):
