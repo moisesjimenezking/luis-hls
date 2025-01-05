@@ -110,25 +110,29 @@ def preview_video():
         return jsonify({"error": "El archivo no existe."}), 404
 
     # Comando FFmpeg para extraer los primeros 30 segundos del video
-    preview_path = os.path.join(VIDEOS_DIR, f"preview_{video_name}")
+    try:
+        preview_path = os.path.join(HLS_OUTPUT_DIR, f"preview_{video_name}")
 
-    if not os.path.exists(preview_path):  # Evita regenerar la vista previa si ya existe
-        cmd = [
-            "ffmpeg", "-i", video_path, "-t", "30", "-c:v", "libx264",
-            "-preset", "ultrafast", "-c:a", "aac", "-b:a", "128k", preview_path, "-y"
-        ]
-        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-    return send_from_directory(VIDEOS_DIR, f"preview_{video_name}")
+        if not os.path.exists(preview_path):  # Evita regenerar la vista previa si ya existe
+            cmd = [
+                "ffmpeg", "-i", video_path, "-t", "30", "-c:v", "libx264",
+                "-preset", "ultrafast", "-c:a", "aac", "-b:a", "128k", preview_path, "-y"
+            ]
+            subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except:
+        return jsonify({"error": "El archivo no puede ser formateado."}), 404 
+    
+    return send_from_directory(HLS_OUTPUT_DIR, f"preview_{video_name}")
 
 
 @app.route("/api/json", methods=["GET"])
 def view_json():
+    json_file = os.path.join(PUBLIC_DIR, "cuaimaTeam.json")
     """Devuelve el contenido del JSON en la respuesta (visualización en navegador)."""
-    if not os.path.exists(JSON_FILE):
+    if not os.path.exists(json_file):
         return jsonify({"error": "El archivo JSON no existe"}), 404
 
-    with open(JSON_FILE, "r", encoding="utf-8") as f:
+    with open(json_file, "r", encoding="utf-8") as f:
         json_content = f.read()
     
     result = dict()
@@ -140,7 +144,7 @@ def view_json():
                 if '.MP4' not in obj['file'].upper():
                     obj['file'] = f"{obj['file']}.MP4"
                     
-                obj['file'] = f"https://cuaimateam.online/api/preview/{obj['file'].replace('MP4', 'mp4')}"
+                obj['file'] = f"https://cuaimateam.online/api/preview?name={obj['file'].replace('MP4', 'mp4')}"
                 
                 result[secuencia].append(obj)
                 
