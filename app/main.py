@@ -2,7 +2,8 @@ import os
 import subprocess
 import threading
 import time
-from flask import Flask, jsonify,Response, send_file
+from flask import Flask, Response, request, jsonify, send_from_directory
+from flask_cors import CORS
 
 app = Flask(__name__)
 
@@ -20,6 +21,10 @@ video_queue = []
 # Ruta del archivo XML dentro de 'app/public/'
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 XML_FILE = os.path.join(BASE_DIR, "app", "public", "epg.xml")
+
+# Ruta del archivo JSON dentro de 'app/public/'
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+JSON_FILE = os.path.join(BASE_DIR, "app", "public", "cuaimaTeam.json")
 
 def stream_videos():
     """Función para reproducir videos en cola secuencialmente."""
@@ -89,6 +94,57 @@ def list_videos():
     """Devuelve la lista de videos disponibles en el directorio."""
     videos = [f for f in os.listdir(VIDEOS_DIR) if f.endswith(".mp4")]
     return jsonify(videos)
+
+@app.route("/api/preview/<path:filename>", methods=["GET"])
+def preview_video(filename):
+    """Devuelve los primeros 30 segundos del video especificado."""
+    video_name = filename  # Obtener el nombre del video desde los parámetros de la URL
+    
+    if not video_name:
+        return jsonify({"error": "Debe proporcionar el nombre del video."}), 400
+
+    video_path = os.path.join(VIDEOS_DIR, video_name)
+
+    if not os.path.exists(video_path):
+        return jsonify({"error": "El archivo no existe."}), 404
+
+    # Comando FFmpeg para extraer los primeros 30 segundos del video
+    preview_path = os.path.join(VIDEOS_DIR, f"preview_{video_name}")
+
+    if not os.path.exists(preview_path):  # Evita regenerar la vista previa si ya existe
+        cmd = [
+            "ffmpeg", "-i", video_path, "-t", "30", "-c:v", "libx264",
+            "-preset", "ultrafast", "-c:a", "aac", "-b:a", "128k", preview_path, "-y"
+        ]
+        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    return send_from_directory(VIDEOS_DIR, f"preview_{video_name}")
+
+
+@app.route("/api/json", methods=["GET"])
+def view_json():
+    """Devuelve el contenido del JSON en la respuesta (visualización en navegador)."""
+    if not os.path.exists(JSON_FILE):
+        return jsonify({"error": "El archivo JSON no existe"}), 404
+
+    with open(JSON_FILE, "r", encoding="utf-8") as f:
+        json_content = f.read()
+    
+    result = dict()
+    for secuencia in json_content:
+        if isinstance(secuencia, list):
+            result.update({secuencia:[]})
+            
+            for obj in secuencia:
+                if '.MP4' not in obj['file'].upper():
+                    obj['file'] = f"{obj['file']}.MP4"
+                    
+                obj['file'] = f"https://cuaimateam.online/api/preview/{obj['file'].replace('MP4', 'mp4')}"
+                
+                result[secuencia].append(obj)
+                
+        
+    return jsonify({"data": result})
 
 if __name__ == "__main__":
     # Iniciar el hilo para manejar la cola de reproducción

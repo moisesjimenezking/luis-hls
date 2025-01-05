@@ -1,0 +1,2477 @@
+{
+    "SECUENCIA_1": [
+        {
+            "secuencia": "1",
+            "file": "CC T1 EP 1.mp4",
+            "duration": "49:25",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 1",
+            "totalSeconds": 2965
+        },
+        {
+            "secuencia": "1",
+            "file": "CC T2 EP 1.mp4",
+            "duration": "43:27",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 1",
+            "totalSeconds": 2607
+        },
+        {
+            "secuencia": "1",
+            "file": "C PE 1.mp4",
+            "duration": "24:51",
+            "programe": "ESPECIAL IRON MAN COZUMEL",
+            "totalSeconds": 1491
+        },
+        {
+            "secuencia": "1",
+            "file": "1FIT.mp4",
+            "duration": "9:57",
+            "programe": "CARLA VANEGAS",
+            "totalSeconds": 597
+        },
+        {
+            "secuencia": "1",
+            "file": "31FIT.mp4",
+            "duration": "8:01",
+            "programe": "LUGARES Y ACTIVIDADES ISLA DE COZUMEL  SHAILA PEREZ",
+            "totalSeconds": 481
+        },
+        {
+            "secuencia": "1",
+            "file": "16FIT.mp4",
+            "duration": "8:05",
+            "programe": "RUTINAS FITNESS Y VISITA RESTAURANT BUENA VIDA",
+            "totalSeconds": 485
+        },
+        {
+            "secuencia": "1",
+            "file": "1AV.MP4",
+            "duration": "23:05",
+            "programe": "ALMA DE VINO EPISODIO 1",
+            "totalSeconds": 1385
+        },
+        {
+            "secuencia": "1",
+            "file": "1BINT",
+            "duration": "32:48",
+            "programe": "LA PSICOTERAPIA  EN EL MUNDO DR KELVIN GARFIAS",
+            "totalSeconds": 1968
+        },
+        {
+            "secuencia": "1",
+            "file": "40BB",
+            "duration": "29:32",
+            "programe": "INSPIRACION ETNICA LILIAN MONTAÑO",
+            "totalSeconds": 1772
+        },
+        {
+            "secuencia": "1",
+            "file": "1PAM",
+            "duration": "44:29",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA EP 1",
+            "totalSeconds": 2669
+        },
+        {
+            "secuencia": "1",
+            "file": "51BINT",
+            "duration": "29:09",
+            "programe": "ENTREVISTA OFEC CIBRUC",
+            "totalSeconds": 1749
+        },
+        {
+            "secuencia": "1",
+            "file": "MC1",
+            "duration": "2:18",
+            "programe": "SAVAGE MYLADONNA",
+            "totalSeconds": 138
+        },
+        {
+            "secuencia": "1",
+            "file": "20BB",
+            "duration": "26:51",
+            "programe": "NDRANGHETA AMENAZA GLOBAL",
+            "totalSeconds": 1611
+        },
+        {
+            "secuencia": "1",
+            "file": "13BINT",
+            "duration": "30:11",
+            "programe": "ILUMITATE FERNANDO LICEA",
+            "totalSeconds": 1811
+        }
+    ],
+    "SECUENCIA_2": [
+        {
+            "secuencia": "2",
+            "file": "CC T1 EP 2.mp4",
+            "duration": "49:22",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 2",
+            "totalSeconds": 2962
+        },
+        {
+            "secuencia": "2",
+            "file": "CC T2 EP 2.mp4",
+            "duration": "24:00",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 2",
+            "totalSeconds": 1440
+        },
+        {
+            "secuencia": "2",
+            "file": "C PE 2.mp4",
+            "duration": "50:18",
+            "programe": "ESPECIAL ISLA DE COZUMEL",
+            "totalSeconds": 3018
+        },
+        {
+            "secuencia": "2",
+            "file": "2FIT.mp4",
+            "duration": "2:24",
+            "programe": "PUERTO CALELLO KARATE PROMO",
+            "totalSeconds": 144
+        },
+        {
+            "secuencia": "2",
+            "file": "32FIT.mp4",
+            "duration": "8:15",
+            "programe": "DIRECTOR DE TURISMO DE COZUMEL ENTREVISTA SHAILA PEREZ",
+            "totalSeconds": 495
+        },
+        {
+            "secuencia": "2",
+            "file": "17FIT.mp4",
+            "duration": "6:45",
+            "programe": "MIA REEF ISLA MUJERES CANCUM",
+            "totalSeconds": 405
+        },
+        {
+            "secuencia": "2",
+            "file": "2AV.MP4",
+            "duration": "23:11",
+            "programe": "ALMA DE VINO EPISODIO 2",
+            "totalSeconds": 1391
+        },
+        {
+            "secuencia": "2",
+            "file": "2BINT",
+            "duration": "32:55",
+            "programe": "LA TERAPIA INTEGRATIVA DR LUIS GARFIAS",
+            "totalSeconds": 1975
+        },
+        {
+            "secuencia": "2",
+            "file": "3BB",
+            "duration": "29:13",
+            "programe": "ARI ARTE MANAGER COUCH ARIADNA ARTEAGA",
+            "totalSeconds": 1753
+        },
+        {
+            "secuencia": "2",
+            "file": "2PAM",
+            "duration": "1:13:13",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA EP 2",
+            "totalSeconds": 73
+        },
+        {
+            "secuencia": "2",
+            "file": "52BINT",
+            "duration": "34:01",
+            "programe": "ENTREVISTA CARLOS M GUTIERREZ BAILE INTL",
+            "totalSeconds": 2041
+        },
+        {
+            "secuencia": "2",
+            "file": "MC2",
+            "duration": "2:49",
+            "programe": "BUMBLBEE MYLADONNA",
+            "totalSeconds": 169
+        },
+        {
+            "secuencia": "2",
+            "file": "22BB",
+            "duration": "26:58",
+            "programe": "REVIVE TUS MIEDOS",
+            "totalSeconds": 1618
+        }
+    ],
+    "SECUENCIA_3": [
+        {
+            "secuencia": "3",
+            "file": "CC T1 EP 3.mp4",
+            "duration": "49:15",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 3",
+            "totalSeconds": 2955
+        },
+        {
+            "secuencia": "3",
+            "file": "CC T2 EP 3.mp4",
+            "duration": "24:06",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 3",
+            "totalSeconds": 1446
+        },
+        {
+            "secuencia": "3",
+            "file": "C PE 3.mp4",
+            "duration": "24:35",
+            "programe": "ESPECIAL KARATE PUERTO CABELLO VENEZUELA",
+            "totalSeconds": 1475
+        },
+        {
+            "secuencia": "3",
+            "file": "3FIT.mp4",
+            "duration": "6:03",
+            "programe": "WORKOUT HOTEL AKUMAL CARIBE",
+            "totalSeconds": 363
+        },
+        {
+            "secuencia": "3",
+            "file": "33FIT.mp4",
+            "duration": "6:24",
+            "programe": "VISITA A EL MUELLECITO COZUMEL SHAILA PEREZ",
+            "totalSeconds": 384
+        },
+        {
+            "secuencia": "3",
+            "file": "18FIT.mp4",
+            "duration": "7:40",
+            "programe": "ESPECIAL ISLA MUJERES  MIA REEF CANCUM",
+            "totalSeconds": 460
+        },
+        {
+            "secuencia": "3",
+            "file": "3AV.MP4",
+            "duration": "24:25",
+            "programe": "ALMA DE VINO EPISODIO 3",
+            "totalSeconds": 1465
+        },
+        {
+            "secuencia": "3",
+            "file": "3BINT",
+            "duration": "27:49",
+            "programe": "CURADOR DE ARTE RICARDO CAMACHO",
+            "totalSeconds": 1669
+        },
+        {
+            "secuencia": "3",
+            "file": "4BB",
+            "duration": "23:51",
+            "programe": "CONSPIRACION INTIMA BRENDA KELLY G",
+            "totalSeconds": 1431
+        },
+        {
+            "secuencia": "3",
+            "file": "5PAM",
+            "duration": "50:10",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 3",
+            "totalSeconds": 3010
+        },
+        {
+            "secuencia": "3",
+            "file": "53BINT",
+            "duration": "32:01",
+            "programe": "DAFNE ALMAZAN NIÑOS SUPER DOTADOS",
+            "totalSeconds": 1921
+        },
+        {
+            "secuencia": "3",
+            "file": "MC3",
+            "duration": "2:46",
+            "programe": "PLOMO MYLADONNA",
+            "totalSeconds": 166
+        },
+        {
+            "secuencia": "3",
+            "file": "23BB",
+            "duration": "26:24",
+            "programe": "DR RAUL CONTRERAS FACULTAD DE DERECHO UNAM",
+            "totalSeconds": 1584
+        },
+        {
+            "secuencia": "3",
+            "file": "15BINT",
+            "duration": "34:54",
+            "programe": "MALASYA EN MEXICO EVENTO",
+            "totalSeconds": 2094
+        }
+    ],
+    "SECUENCIA_4": [
+        {
+            "secuencia": "4",
+            "file": "CC T1 EP 4.mp4",
+            "duration": "52:35",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 4",
+            "totalSeconds": 3155
+        },
+        {
+            "secuencia": "4",
+            "file": "CC T2 EP 4.mp4",
+            "duration": "24:16",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 4",
+            "totalSeconds": 1456
+        },
+        {
+            "secuencia": "4",
+            "file": "4FIT.mp4",
+            "duration": "7:14",
+            "programe": "CRONISTA DE ISLA MUJERES EL SR FIDEL",
+            "totalSeconds": 434
+        },
+        {
+            "secuencia": "4",
+            "file": "34FIT.mp4",
+            "duration": "7:18",
+            "programe": "ENTREVISTA ENRIQUE LIMA PIONERO ISLA MUJERES",
+            "totalSeconds": 438
+        },
+        {
+            "secuencia": "4",
+            "file": "19FIT.mp4",
+            "duration": "7:50",
+            "programe": "WORKOUT PUNTA SUR ISLA MUJERES",
+            "totalSeconds": 470
+        },
+        {
+            "secuencia": "4",
+            "file": "4AV.MP4",
+            "duration": "23:32",
+            "programe": "ALMA DE VINO EPISODIO 4",
+            "totalSeconds": 1412
+        },
+        {
+            "secuencia": "4",
+            "file": "4BINT",
+            "duration": "31:39",
+            "programe": "SHOW PLAY EMTRETAIMENT GISSELLE MARIN",
+            "totalSeconds": 1899
+        },
+        {
+            "secuencia": "4",
+            "file": "5BB",
+            "duration": "24:49",
+            "programe": "REHABILITACION Y MEDICINA BIOLOGICA  DR LUIS GARFIAS",
+            "totalSeconds": 1489
+        },
+        {
+            "secuencia": "4",
+            "file": "6PAM",
+            "duration": "44:53",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 4",
+            "totalSeconds": 2693
+        },
+        {
+            "secuencia": "4",
+            "file": "54BINT",
+            "duration": "31:08",
+            "programe": "FEDERICO VALE CHIRINOS EL HIMNO MEXICANO",
+            "totalSeconds": 1868
+        },
+        {
+            "secuencia": "4",
+            "file": "24BB",
+            "duration": "29:49",
+            "programe": "LA CANA  PROYECTO REINSERCION SOCIAL RAQUEL AGUIRRE",
+            "totalSeconds": 1789
+        }
+    ],
+    "SECUENCIA_5": [
+        {
+            "secuencia": "5",
+            "file": "CC T1 EP 5.mp4",
+            "duration": "49:17",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 5",
+            "totalSeconds": 2957
+        },
+        {
+            "secuencia": "5",
+            "file": "CC T2 EP 5.mp4",
+            "duration": "24:16",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 5",
+            "totalSeconds": 1456
+        },
+        {
+            "secuencia": "5",
+            "file": "5FIT.mp4",
+            "duration": "7:55",
+            "programe": "COZUMEL DANY ORCE",
+            "totalSeconds": 475
+        },
+        {
+            "secuencia": "5",
+            "file": "35FIT.mp4",
+            "duration": "7:59",
+            "programe": "WORK OUT SHEILA PEREZ Y DANY ORCE",
+            "totalSeconds": 479
+        },
+        {
+            "secuencia": "5",
+            "file": "20FIT.mp4",
+            "duration": "8:35",
+            "programe": "DON CAFETO RESTAURANT MR GERMAN GALLEGOS",
+            "totalSeconds": 515
+        },
+        {
+            "secuencia": "5",
+            "file": "5AV.MP4",
+            "duration": "23:22",
+            "programe": "ALMA DE VINO EPISODIO 5",
+            "totalSeconds": 1402
+        },
+        {
+            "secuencia": "5",
+            "file": "5BINT",
+            "duration": "28:15",
+            "programe": "EL AUTISMO FUNDACION VALENTINA ISIS SARAI BOLAÑOS",
+            "totalSeconds": 1695
+        },
+        {
+            "secuencia": "5",
+            "file": "8BB",
+            "duration": "24:23",
+            "programe": "EL AUTISMO FUNDACION VALENTINA ISIS SARAI BOLAÑOS",
+            "totalSeconds": 1463
+        },
+        {
+            "secuencia": "5",
+            "file": "8PAM",
+            "duration": "50:44",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 5",
+            "totalSeconds": 3044
+        },
+        {
+            "secuencia": "5",
+            "file": "55BINT",
+            "duration": "29:46",
+            "programe": "GABRIEL COBAYASSI MADE IN SPANISH DOBLAJE",
+            "totalSeconds": 1786
+        },
+        {
+            "secuencia": "5",
+            "file": "28BB",
+            "duration": "29:39",
+            "programe": "RENE VALERIO ECOS DEL PASADO",
+            "totalSeconds": 1779
+        }
+    ],
+    "SECUENCIA_6": [
+        {
+            "secuencia": "6",
+            "file": "CC T1 EP 6.mp4",
+            "duration": "24:09",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 6",
+            "totalSeconds": 1449
+        },
+        {
+            "secuencia": "6",
+            "file": "CC T2 EP 6.mp4",
+            "duration": "49:17",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 6",
+            "totalSeconds": 2957
+        },
+        {
+            "secuencia": "6",
+            "file": "6FIT.mp4",
+            "duration": "1:18",
+            "programe": "ESPECIAL ISLA MUJERES DANY ORCE",
+            "totalSeconds": 78
+        },
+        {
+            "secuencia": "6",
+            "file": "36FIT.mp4",
+            "duration": "3:38",
+            "programe": "GYM SERIE GIGANTE  WALDO GARCIA",
+            "totalSeconds": 218
+        },
+        {
+            "secuencia": "6",
+            "file": "21FIT.mp4",
+            "duration": "8:02",
+            "programe": "RUTINA GLUTEOS Y VISTA AL DEL MAR LATINO DANY ORCE",
+            "totalSeconds": 482
+        },
+        {
+            "secuencia": "6",
+            "file": "6AV.MP4",
+            "duration": "24:11",
+            "programe": "ALMA DE VINO EPISODIO 6",
+            "totalSeconds": 1451
+        },
+        {
+            "secuencia": "6",
+            "file": "8BINT",
+            "duration": "25:40",
+            "programe": "ANTONIETA TITO DREINHUFFER",
+            "totalSeconds": 1540
+        },
+        {
+            "secuencia": "6",
+            "file": "9BB",
+            "duration": "26:09",
+            "programe": "ASI DE SIMPLE ADRI PARDO Y JUAN PABLO ROCHA",
+            "totalSeconds": 1569
+        },
+        {
+            "secuencia": "6",
+            "file": "9PAM",
+            "duration": "47:51",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 6",
+            "totalSeconds": 2871
+        },
+        {
+            "secuencia": "6",
+            "file": "56BINT",
+            "duration": "30:53",
+            "programe": "MAJO RODRIGUEZ PILOTO PROFESIONAL MX",
+            "totalSeconds": 1853
+        },
+        {
+            "secuencia": "6",
+            "file": "30BB",
+            "duration": "28:36",
+            "programe": "BENY HADID CONDUCTORA",
+            "totalSeconds": 1716
+        },
+        {
+            "secuencia": "6",
+            "file": "16BINT",
+            "duration": "26:08",
+            "programe": "TE VE AMERICA JAVIER TENA",
+            "totalSeconds": 1568
+        }
+    ],
+    "SECUENCIA_7": [
+        {
+            "secuencia": "7",
+            "file": "CC T1 EP 7.mp4",
+            "duration": "49:19",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 7",
+            "totalSeconds": 2959
+        },
+        {
+            "secuencia": "7",
+            "file": "CC T2 EP 7.mp4",
+            "duration": "49:14",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 7",
+            "totalSeconds": 2954
+        },
+        {
+            "secuencia": "7",
+            "file": "7FIT.mp4",
+            "duration": "1:59",
+            "programe": "ESPECIAL ISLA MUJERES SHAILA PEREZ",
+            "totalSeconds": 119
+        },
+        {
+            "secuencia": "7",
+            "file": "37FIT.mp4",
+            "duration": "6:15",
+            "programe": " GYM WALDO GARCIA CAMPEON MUNDIAL DE FISICO CULTURISMO",
+            "totalSeconds": 375
+        },
+        {
+            "secuencia": "7",
+            "file": "22FIT.mp4",
+            "duration": "11:33",
+            "programe": "FOOD FIT CARLA VANEGAS",
+            "totalSeconds": 693
+        },
+        {
+            "secuencia": "7",
+            "file": "7AV.MP4",
+            "duration": "24:08",
+            "programe": "ALMA DE VINO EPISODIO 7",
+            "totalSeconds": 1448
+        },
+        {
+            "secuencia": "7",
+            "file": "9BINT",
+            "duration": "31:24",
+            "programe": "NEURO ABUNDANCIA VERONICA DEL CASTILLO",
+            "totalSeconds": 1884
+        },
+        {
+            "secuencia": "7",
+            "file": "12BB",
+            "duration": "25:32",
+            "programe": "MARIO QUINTAL TAROTISTA ENERGETICO",
+            "totalSeconds": 1532
+        },
+        {
+            "secuencia": "7",
+            "file": "10PAM",
+            "duration": "51:20",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 7",
+            "totalSeconds": 3080
+        },
+        {
+            "secuencia": "7",
+            "file": "57BINT",
+            "duration": "34:24",
+            "programe": "MARY VILLALOBOS CAMPEONA MUNDIAL DE BOX",
+            "totalSeconds": 2064
+        },
+        {
+            "secuencia": "7",
+            "file": "1OFEC",
+            "duration": "2:52",
+            "programe": "ALIADO CONSTANTE",
+            "totalSeconds": 172
+        },
+        {
+            "secuencia": "7",
+            "file": "2OFEC",
+            "duration": "2:55",
+            "programe": "OFEC VA AL FRENTE",
+            "totalSeconds": 175
+        },
+        {
+            "secuencia": "7",
+            "file": "31BB",
+            "duration": "28:17",
+            "programe": "ANTONIETA TITO DREINHUFFER",
+            "totalSeconds": 1697
+        }
+    ],
+    "SECUENCIA_8": [
+        {
+            "secuencia": "8",
+            "file": "CC T1 EP 8.mp4",
+            "duration": "49:08",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 8",
+            "totalSeconds": 2948
+        },
+        {
+            "secuencia": "8",
+            "file": "CC T2 EP 8.mp4",
+            "duration": "24:43",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 8",
+            "totalSeconds": 1483
+        },
+        {
+            "secuencia": "8",
+            "file": "8FIT.mp4",
+            "duration": "9:20",
+            "programe": "ENTREVISTA COORDINADOR GENERAL DEL CEA",
+            "totalSeconds": 560
+        },
+        {
+            "secuencia": "8",
+            "file": "38FIT.mp4",
+            "duration": "3:23",
+            "programe": "ENTREVISTA WALDO GARCIA",
+            "totalSeconds": 203
+        },
+        {
+            "secuencia": "8",
+            "file": "23FIT.mp4",
+            "duration": "1:39",
+            "programe": "GRETA SUSA ",
+            "totalSeconds": 99
+        },
+        {
+            "secuencia": "8",
+            "file": "8AV.MP4",
+            "duration": "24:37",
+            "programe": "ALMA DE VINO EPISODIO 8",
+            "totalSeconds": 1477
+        },
+        {
+            "secuencia": "8",
+            "file": "10BINT",
+            "duration": "30:49",
+            "programe": "SI SOY YO NO ERES TU DAMIELA CARBVLLO",
+            "totalSeconds": 1849
+        },
+        {
+            "secuencia": "8",
+            "file": "13BB",
+            "duration": "26:15",
+            "programe": "MARIA URIAS DISEÑADORA DE JOYAS",
+            "totalSeconds": 1575
+        },
+        {
+            "secuencia": "8",
+            "file": "11PAM",
+            "duration": "52:51",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 8",
+            "totalSeconds": 3171
+        },
+        {
+            "secuencia": "8",
+            "file": "58BINT",
+            "duration": "32:09",
+            "programe": "NOI KURI ESCULTORA",
+            "totalSeconds": 1929
+        },
+        {
+            "secuencia": "8",
+            "file": "34BB",
+            "duration": "27:26",
+            "programe": "SARA BASURTO CLAA EDUCATION",
+            "totalSeconds": 1646
+        }
+    ],
+    "SECUENCIA_9": [
+        {
+            "secuencia": "9",
+            "file": "CC T1 EP 9.mp4",
+            "duration": "50:14",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 9",
+            "totalSeconds": 3014
+        },
+        {
+            "secuencia": "9",
+            "file": "CC T2 EP 9.mp4",
+            "duration": "44:57",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 9",
+            "totalSeconds": 2697
+        },
+        {
+            "secuencia": "9",
+            "file": "9FIT.mp4",
+            "duration": "1:25",
+            "programe": "ESPECIAL ISLA MUJERES DANY ORCE",
+            "totalSeconds": 85
+        },
+        {
+            "secuencia": "9",
+            "file": "39FIT.mp4",
+            "duration": "8:07",
+            "programe": "VISITA PARQUE ECOLOGICO PUNTA SUR LAGUNA COLUMBIA",
+            "totalSeconds": 487
+        },
+        {
+            "secuencia": "9",
+            "file": "24FIT.mp4",
+            "duration": "11:11",
+            "programe": "BCANOS BEACH CLUB  ",
+            "totalSeconds": 671
+        },
+        {
+            "secuencia": "9",
+            "file": "1AV.MP4",
+            "duration": "23:05",
+            "programe": "ALMA DE VINO EPISODIO 1",
+            "totalSeconds": 1385
+        },
+        {
+            "secuencia": "9",
+            "file": "11BINT",
+            "duration": "32:27",
+            "programe": "HANNA DE LAMADRID ACTIVISTA SOCIAL",
+            "totalSeconds": 1947
+        },
+        {
+            "secuencia": "9",
+            "file": "16BB",
+            "duration": "31:33",
+            "programe": "ANDRES GUTIERREZ ACTOR DE DOBLAJE",
+            "totalSeconds": 1893
+        },
+        {
+            "secuencia": "9",
+            "file": "12PAM",
+            "duration": "43:49",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 9",
+            "totalSeconds": 2629
+        },
+        {
+            "secuencia": "9",
+            "file": "59BINT",
+            "duration": "32:25",
+            "programe": "FUNDACION TODO POR PATITAS",
+            "totalSeconds": 1945
+        },
+        {
+            "secuencia": "9",
+            "file": "37BB",
+            "duration": "26:45",
+            "programe": "BIOPAQUE ESTRELLA",
+            "totalSeconds": 1605
+        },
+        {
+            "secuencia": "9",
+            "file": "17BINT",
+            "duration": "32:36",
+            "programe": "JORGE CHAHIN PRESIDENTE OFEC",
+            "totalSeconds": 1956
+        }
+    ],
+    "SECUENCIA_10": [
+        {
+            "secuencia": "10",
+            "file": "CC T1 EP 10.mp4",
+            "duration": "50:39",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 10",
+            "totalSeconds": 3039
+        },
+        {
+            "secuencia": "10",
+            "file": "CC T2 EP 10.mp4",
+            "duration": "24:35",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 10",
+            "totalSeconds": 1475
+        },
+        {
+            "secuencia": "10",
+            "file": "10FIT.mp4",
+            "duration": "8:07",
+            "programe": "ESPECIAL SUBMARINO ATLANTIS DANY ORCE",
+            "totalSeconds": 487
+        },
+        {
+            "secuencia": "10",
+            "file": "40FIT.mp4",
+            "duration": "8:27",
+            "programe": "ENTREVISTA PREVIA IRON MAN COZUMEL MARCOS VELAZQUEZ",
+            "totalSeconds": 507
+        },
+        {
+            "secuencia": "10",
+            "file": "25FIT.mp4",
+            "duration": "1:11",
+            "programe": "RETO EAT CHILES ",
+            "totalSeconds": 71
+        },
+        {
+            "secuencia": "10",
+            "file": "2AV.MP4",
+            "duration": "23:11",
+            "programe": "ALMA DE VINO EPISODIO 2",
+            "totalSeconds": 1391
+        },
+        {
+            "secuencia": "10",
+            "file": "14BINT",
+            "duration": "28:21",
+            "programe": "EMBAJADA DE MALASYA EN MEXICO",
+            "totalSeconds": 1701
+        },
+        {
+            "secuencia": "10",
+            "file": "20BB",
+            "duration": "26:51",
+            "programe": "NDRANGHETA AMENAZA GLOBAL",
+            "totalSeconds": 1611
+        },
+        {
+            "secuencia": "10",
+            "file": "13PAM",
+            "duration": "57:31",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 10",
+            "totalSeconds": 3451
+        },
+        {
+            "secuencia": "10",
+            "file": "60BINT",
+            "duration": "31:24",
+            "programe": "MUSEO INTERACTIVO DE ECONOMÍA CD MEX",
+            "totalSeconds": 1884
+        },
+        {
+            "secuencia": "10",
+            "file": "2BB",
+            "duration": "31:33",
+            "programe": "ALVARO CARRILLO JR",
+            "totalSeconds": 1893
+        }
+    ],
+    "SECUENCIA_11": [
+        {
+            "secuencia": "11",
+            "file": "CC T1 EP 11.mp4",
+            "duration": "49:04",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 11",
+            "totalSeconds": 2944
+        },
+        {
+            "secuencia": "11",
+            "file": "CC T2 EP 11.mp4",
+            "duration": "24:34",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 11",
+            "totalSeconds": 1474
+        },
+        {
+            "secuencia": "11",
+            "file": "11FIT.mp4",
+            "duration": "6:55",
+            "programe": "ESPECIAL CASA MISION  COZUMEL DANY ORCE",
+            "totalSeconds": 415
+        },
+        {
+            "secuencia": "11",
+            "file": "41FIT.mp4",
+            "duration": "7:59",
+            "programe": "VISITA PARQUE PUNTA AZUL CASA DEL FARERO",
+            "totalSeconds": 479
+        },
+        {
+            "secuencia": "11",
+            "file": "26FIT.mp4",
+            "duration": "1:42",
+            "programe": "SENTADILLAS JEFFERSON WALDO GARCIA",
+            "totalSeconds": 102
+        },
+        {
+            "secuencia": "11",
+            "file": "3AV.MP4",
+            "duration": "24:25",
+            "programe": "ALMA DE VINO EPISODIO 3",
+            "totalSeconds": 1465
+        },
+        {
+            "secuencia": "11",
+            "file": "13BINT",
+            "duration": "30:11",
+            "programe": "ILUMITATE FERNANDO LICEA",
+            "totalSeconds": 1811
+        },
+        {
+            "secuencia": "11",
+            "file": "22BB",
+            "duration": "26:58",
+            "programe": "REVIVE TUS MIEDOS",
+            "totalSeconds": 1618
+        },
+        {
+            "secuencia": "11",
+            "file": "14PAM",
+            "duration": "42:35",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 11",
+            "totalSeconds": 2555
+        },
+        {
+            "secuencia": "11",
+            "file": "61BINT",
+            "duration": "34:00",
+            "programe": "CAMINO AL MICTLAN",
+            "totalSeconds": 2040
+        },
+        {
+            "secuencia": "11",
+            "file": "39BB",
+            "duration": "27:05",
+            "programe": "JUAN BARRAGAN COMUNICADOR",
+            "totalSeconds": 1625
+        }
+    ],
+    "SECUENCIA_12": [
+        {
+            "secuencia": "12",
+            "file": "CC T1 EP 12.mp4",
+            "duration": "49:18",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 12",
+            "totalSeconds": 2958
+        },
+        {
+            "secuencia": "12",
+            "file": "CC T2 EP 12.mp4",
+            "duration": "24:46",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 12",
+            "totalSeconds": 1486
+        },
+        {
+            "secuencia": "12",
+            "file": "12FIT.mp4",
+            "duration": "8:00",
+            "programe": "ESPECIAL CENOTE SANTA CRUZ EN TULUM",
+            "totalSeconds": 480
+        },
+        {
+            "secuencia": "12",
+            "file": "42FIT.mp4",
+            "duration": "8:44",
+            "programe": "PESCA DEPORTIVA ENTREVISTA ANTHONY MENDILLO",
+            "totalSeconds": 524
+        },
+        {
+            "secuencia": "12",
+            "file": "27FIT.mp4",
+            "duration": "8:02",
+            "programe": "PESCA DEPORTIVA SHAILA PEREZ",
+            "totalSeconds": 482
+        },
+        {
+            "secuencia": "12",
+            "file": "4AV.MP4",
+            "duration": "23:32",
+            "programe": "ALMA DE VINO EPISODIO 4",
+            "totalSeconds": 1412
+        },
+        {
+            "secuencia": "12",
+            "file": "15BINT",
+            "duration": "34:54",
+            "programe": "MALASYA EN MEXICO EVENTO",
+            "totalSeconds": 2094
+        },
+        {
+            "secuencia": "12",
+            "file": "23BB",
+            "duration": "26:24",
+            "programe": "DR RAUL CONTRERAS FACULTAD DE DERECHO UNAM",
+            "totalSeconds": 1584
+        },
+        {
+            "secuencia": "12",
+            "file": "62BINT",
+            "duration": "30:42",
+            "programe": "LOS CLONES",
+            "totalSeconds": 1842
+        },
+        {
+            "secuencia": "12",
+            "file": "MC1",
+            "duration": "2:18",
+            "programe": "SAVAGE MYLADONNA",
+            "totalSeconds": 138
+        },
+        {
+            "secuencia": "12",
+            "file": "1PAM",
+            "duration": "44:29",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA EP 1",
+            "totalSeconds": 2669
+        },
+        {
+            "secuencia": "12",
+            "file": "50BB",
+            "duration": "27:31",
+            "programe": "ENTREVISTA EVER MORA CARACTERIZADOR",
+            "totalSeconds": 1651
+        },
+        {
+            "secuencia": "12",
+            "file": "21BINT",
+            "duration": "31:29",
+            "programe": "ADRIAN BEDOLLA EL JILGUERO",
+            "totalSeconds": 1889
+        }
+    ],
+    "SECUENCIA_13": [
+        {
+            "secuencia": "13",
+            "file": "CC T1 EP 13.mp4",
+            "duration": "49:48",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 13",
+            "totalSeconds": 2988
+        },
+        {
+            "secuencia": "13",
+            "file": "CC T2 EP 13.mp4",
+            "duration": "24:01",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 13",
+            "totalSeconds": 1441
+        },
+        {
+            "secuencia": "13",
+            "file": "13FIT.mp4",
+            "duration": "7:37",
+            "programe": "ESPECIAL PLAYA BAHÍA  HOTEL AKUMAL CARIBE",
+            "totalSeconds": 457
+        },
+        {
+            "secuencia": "13",
+            "file": "43FIT.mp4",
+            "duration": "10:53",
+            "programe": "WALDOS FITNESS NANCY RODRIGUEZ",
+            "totalSeconds": 653
+        },
+        {
+            "secuencia": "13",
+            "file": "28FIT.mp4",
+            "duration": "7:52",
+            "programe": "ICE BAR ISLA MUJERES SHAILA PEREZ",
+            "totalSeconds": 472
+        },
+        {
+            "secuencia": "13",
+            "file": "5AV.MP4",
+            "duration": "23:22",
+            "programe": "ALMA DE VINO EPISODIO 5",
+            "totalSeconds": 1402
+        },
+        {
+            "secuencia": "13",
+            "file": "16BINT",
+            "duration": "26:08",
+            "programe": "TE VE AMERICA JAVIER TENA",
+            "totalSeconds": 1568
+        },
+        {
+            "secuencia": "13",
+            "file": "24BB",
+            "duration": "29:49",
+            "programe": "LA CANA  PROYECTO REINSERCION SOCIAL RAQUEL AGUIRRE",
+            "totalSeconds": 1789
+        },
+        {
+            "secuencia": "13",
+            "file": "63BINT",
+            "duration": "32:03",
+            "programe": "ALEXANDRA IN WONDERLAND",
+            "totalSeconds": 1923
+        },
+        {
+            "secuencia": "13",
+            "file": "MC2",
+            "duration": "2:49",
+            "programe": "BUMBLBEE MYLADONNA",
+            "totalSeconds": 169
+        },
+        {
+            "secuencia": "13",
+            "file": "2PAM",
+            "duration": "1:13:13",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA EP 2",
+            "totalSeconds": 73
+        }
+    ],
+    "SECUENCIA_14": [
+        {
+            "secuencia": "14",
+            "file": "CC T1 EP 14.mp4",
+            "duration": "49:19",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 14",
+            "totalSeconds": 2959
+        },
+        {
+            "secuencia": "14",
+            "file": "CC T2 EP 14.mp4",
+            "duration": "23:59",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 14",
+            "totalSeconds": 1439
+        },
+        {
+            "secuencia": "14",
+            "file": "14FIT.mp4",
+            "duration": "7:35",
+            "programe": "AVENTURA KAYAK Y PADDLE BOARD",
+            "totalSeconds": 455
+        },
+        {
+            "secuencia": "14",
+            "file": "44FIT.mp4",
+            "duration": "7:59",
+            "programe": "VISITA RESTAURENTE LAS HAMACAS  SHEILA PEREZ",
+            "totalSeconds": 479
+        },
+        {
+            "secuencia": "14",
+            "file": "29FIT.mp4",
+            "duration": "7:07",
+            "programe": "LUGARES Y ACTIVIDADES ISLA COZUMEL SHAILA PEREZ",
+            "totalSeconds": 427
+        },
+        {
+            "secuencia": "14",
+            "file": "6AV.MP4",
+            "duration": "24:11",
+            "programe": "ALMA DE VINO EPISODIO 6",
+            "totalSeconds": 1451
+        },
+        {
+            "secuencia": "14",
+            "file": "17BINT",
+            "duration": "32:36",
+            "programe": "JORGE CHAHIN PRESIDENTE OFEC",
+            "totalSeconds": 1956
+        },
+        {
+            "secuencia": "14",
+            "file": "28BB",
+            "duration": "29:39",
+            "programe": "RENE VALERIO ECOS DEL PASADO",
+            "totalSeconds": 1779
+        },
+        {
+            "secuencia": "14",
+            "file": "64BINT",
+            "duration": "29:34",
+            "programe": "ADREW ALMAZAN DIRECTOR DEL CEDAT",
+            "totalSeconds": 1774
+        },
+        {
+            "secuencia": "14",
+            "file": "MC3",
+            "duration": "2:46",
+            "programe": "PLOMO MYLADONNA",
+            "totalSeconds": 166
+        },
+        {
+            "secuencia": "14",
+            "file": "1OFEC",
+            "duration": "2:52",
+            "programe": "ALIADO CONSTANTE",
+            "totalSeconds": 172
+        },
+        {
+            "secuencia": "14",
+            "file": "2OFEC",
+            "duration": "2:55",
+            "programe": "OFEC VA AL FRENTE",
+            "totalSeconds": 175
+        },
+        {
+            "secuencia": "14",
+            "file": "5PAM",
+            "duration": "50:10",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 3",
+            "totalSeconds": 3010
+        }
+    ],
+    "SECUENCIA_15": [
+        {
+            "secuencia": "15",
+            "file": "CC T1 EP 15 .mp4",
+            "duration": "49:23",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 15",
+            "totalSeconds": 2963
+        },
+        {
+            "secuencia": "15",
+            "file": "CC T2 EP 15.mp4",
+            "duration": "24:28",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 15",
+            "totalSeconds": 1468
+        },
+        {
+            "secuencia": "15",
+            "file": "15FIT.mp4",
+            "duration": "8:45",
+            "programe": "VISITA ULTRA CARGA 3 KENYA VALENCIA OFICIAL",
+            "totalSeconds": 525
+        },
+        {
+            "secuencia": "15",
+            "file": "45FIT.mp4",
+            "duration": "15:05",
+            "programe": "ENTRENAMIENTO WALDO GARCIA",
+            "totalSeconds": 905
+        },
+        {
+            "secuencia": "15",
+            "file": "30FIT.mp4",
+            "duration": "8:09",
+            "programe": "IRON MAN COZUMEL SHAILA PEREZ",
+            "totalSeconds": 489
+        },
+        {
+            "secuencia": "15",
+            "file": "7AV.MP4",
+            "duration": "24:08",
+            "programe": "ALMA DE VINO EPISODIO 7",
+            "totalSeconds": 1448
+        },
+        {
+            "secuencia": "15",
+            "file": "21BINT",
+            "duration": "31:29",
+            "programe": "ADRIAN BEDOLLA EL JILGUERO",
+            "totalSeconds": 1889
+        },
+        {
+            "secuencia": "15",
+            "file": "30BB",
+            "duration": "28:36",
+            "programe": "BENY HADID CONDUCTORA",
+            "totalSeconds": 1716
+        },
+        {
+            "secuencia": "15",
+            "file": "65BINT",
+            "duration": "30:24",
+            "programe": "ENTREVISTA MANY GUZMAN JR",
+            "totalSeconds": 1824
+        },
+        {
+            "secuencia": "15",
+            "file": "6PAM",
+            "duration": "44:53",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 4",
+            "totalSeconds": 2693
+        },
+        {
+            "secuencia": "15",
+            "file": "22BINT",
+            "duration": "30:32",
+            "programe": "AMERICA SIN MUROS BERNARDO MENDEZ LUGO",
+            "totalSeconds": 1832
+        }
+    ],
+    "SECUENCIA_16": [
+        {
+            "secuencia": "16",
+            "file": "CC T1 EP 16 .mp4",
+            "duration": "49:33",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 16",
+            "totalSeconds": 2973
+        },
+        {
+            "secuencia": "16",
+            "file": "16FIT.mp4",
+            "duration": "8:05",
+            "programe": "RUTINAS FITNESS Y VISITA RESTAURANT BUENA VIDA",
+            "totalSeconds": 485
+        },
+        {
+            "secuencia": "16",
+            "file": "46FIT.mp4",
+            "duration": "2:54",
+            "programe": "RUTINAS PARA ABDOMEN",
+            "totalSeconds": 174
+        },
+        {
+            "secuencia": "16",
+            "file": "1FIT.mp4",
+            "duration": "9:57",
+            "programe": "CARLA VANEGAS",
+            "totalSeconds": 597
+        },
+        {
+            "secuencia": "16",
+            "file": "31FIT.mp4",
+            "duration": "8:01",
+            "programe": "LUGARES Y ACTIVIDADES ISLA DE COZUMEL  SHAILA PEREZ",
+            "totalSeconds": 481
+        },
+        {
+            "secuencia": "16",
+            "file": "8AV.MP4",
+            "duration": "24:37",
+            "programe": "ALMA DE VINO EPISODIO 8",
+            "totalSeconds": 1477
+        },
+        {
+            "secuencia": "16",
+            "file": "22BINT",
+            "duration": "30:32",
+            "programe": "AMERICA SIN MUROS BERNARDO MENDEZ LUGO",
+            "totalSeconds": 1832
+        },
+        {
+            "secuencia": "16",
+            "file": "31BB",
+            "duration": "28:17",
+            "programe": "ANTONIETA TITO DREINHUFFER",
+            "totalSeconds": 1697
+        },
+        {
+            "secuencia": "16",
+            "file": "66BINT",
+            "duration": "32:52",
+            "programe": "LA MAFIA MEXICANA ESCRITOR ANTONIO EDUARDO COSS",
+            "totalSeconds": 1972
+        },
+        {
+            "secuencia": "16",
+            "file": "51BINT",
+            "duration": "29:09",
+            "programe": "ENTREVISTA OFEC CIBRUC",
+            "totalSeconds": 1749
+        },
+        {
+            "secuencia": "16",
+            "file": "8PAM",
+            "duration": "50:44",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 5",
+            "totalSeconds": 3044
+        }
+    ],
+    "SECUENCIA_17": [
+        {
+            "secuencia": "17",
+            "file": "17FIT.mp4",
+            "duration": "6:45",
+            "programe": "MIA REEF ISLA MUJERES CANCUM",
+            "totalSeconds": 405
+        },
+        {
+            "secuencia": "17",
+            "file": "CC T1 EP 1.mp4",
+            "duration": "49:25",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 1",
+            "totalSeconds": 2965
+        },
+        {
+            "secuencia": "17",
+            "file": "CC T2 EP 1.mp4",
+            "duration": "43:27",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 1",
+            "totalSeconds": 2607
+        },
+        {
+            "secuencia": "17",
+            "file": "2FIT.mp4",
+            "duration": "2:24",
+            "programe": "PUERTO CALELLO KARATE PROMO",
+            "totalSeconds": 144
+        },
+        {
+            "secuencia": "17",
+            "file": "32FIT.mp4",
+            "duration": "8:15",
+            "programe": "DIRECTOR DE TURISMO DE COZUMEL ENTREVISTA SHAILA PEREZ",
+            "totalSeconds": 495
+        },
+        {
+            "secuencia": "17",
+            "file": "1AV.MP4",
+            "duration": "23:05",
+            "programe": "ALMA DE VINO EPISODIO 1",
+            "totalSeconds": 1385
+        },
+        {
+            "secuencia": "17",
+            "file": "23BINT",
+            "duration": "28:21",
+            "programe": "VIEJO ARBOL MUNDO MAGICO AC EDUARDO ABELARDO",
+            "totalSeconds": 1701
+        },
+        {
+            "secuencia": "17",
+            "file": "34BB",
+            "duration": "27:26",
+            "programe": "SARA BASURTO CLAA EDUCATION",
+            "totalSeconds": 1646
+        },
+        {
+            "secuencia": "17",
+            "file": "52BINT",
+            "duration": "34:01",
+            "programe": "ENTREVISTA CARLOS M GUTIERREZ BAILE INTL",
+            "totalSeconds": 2041
+        },
+        {
+            "secuencia": "17",
+            "file": "9PAM",
+            "duration": "47:51",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 6",
+            "totalSeconds": 2871
+        }
+    ],
+    "SECUENCIA_18": [
+        {
+            "secuencia": "18",
+            "file": "18FIT.mp4",
+            "duration": "7:40",
+            "programe": "ESPECIAL ISLA MUJERES  MIA REEF CANCUM",
+            "totalSeconds": 460
+        },
+        {
+            "secuencia": "18",
+            "file": "CC T1 EP 2.mp4",
+            "duration": "49:22",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 2",
+            "totalSeconds": 2962
+        },
+        {
+            "secuencia": "18",
+            "file": "CC T2 EP 2.mp4",
+            "duration": "24:00",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 2",
+            "totalSeconds": 1440
+        },
+        {
+            "secuencia": "18",
+            "file": "3FIT.mp4",
+            "duration": "6:03",
+            "programe": "WORKOUT HOTEL AKUMAL CARIBE",
+            "totalSeconds": 363
+        },
+        {
+            "secuencia": "18",
+            "file": "33FIT.mp4",
+            "duration": "6:24",
+            "programe": "VISITA A EL MUELLECITO COZUMEL SHAILA PEREZ",
+            "totalSeconds": 384
+        },
+        {
+            "secuencia": "18",
+            "file": "2AV.MP4",
+            "duration": "23:11",
+            "programe": "ALMA DE VINO EPISODIO 2",
+            "totalSeconds": 1391
+        },
+        {
+            "secuencia": "18",
+            "file": "24BINT",
+            "duration": "25:58",
+            "programe": "GRACIELA FERREIRO ASOCIACION DE ARTISTAS PLASTICOS AC",
+            "totalSeconds": 1558
+        },
+        {
+            "secuencia": "18",
+            "file": "37BB",
+            "duration": "26:45",
+            "programe": "BIOPAQUE ESTRELLA",
+            "totalSeconds": 1605
+        },
+        {
+            "secuencia": "18",
+            "file": "53BINT",
+            "duration": "32:01",
+            "programe": "DAFNE ALMAZAN NIÑOS SUPER DOTADOS",
+            "totalSeconds": 1921
+        },
+        {
+            "secuencia": "18",
+            "file": "10PAM",
+            "duration": "51:20",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 7",
+            "totalSeconds": 3080
+        },
+        {
+            "secuencia": "18",
+            "file": "23BINT",
+            "duration": "28:21",
+            "programe": "VIEJO ARBOL MUNDO MAGICO AC EDUARDO ABELARDO",
+            "totalSeconds": 1701
+        }
+    ],
+    "SECUENCIA_19": [
+        {
+            "secuencia": "19",
+            "file": "19FIT.mp4",
+            "duration": "7:50",
+            "programe": "WORKOUT PUNTA SUR ISLA MUJERES",
+            "totalSeconds": 470
+        },
+        {
+            "secuencia": "19",
+            "file": "CC T1 EP 3.mp4",
+            "duration": "49:15",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 3",
+            "totalSeconds": 2955
+        },
+        {
+            "secuencia": "19",
+            "file": "CC T2 EP 3.mp4",
+            "duration": "24:06",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 3",
+            "totalSeconds": 1446
+        },
+        {
+            "secuencia": "19",
+            "file": "4FIT.mp4",
+            "duration": "7:14",
+            "programe": "CRONISTA DE ISLA MUJERES EL SR FIDEL",
+            "totalSeconds": 434
+        },
+        {
+            "secuencia": "19",
+            "file": "34FIT.mp4",
+            "duration": "7:18",
+            "programe": "ENTREVISTA ENRIQUE LIMA PIONERO ISLA MUJERES",
+            "totalSeconds": 438
+        },
+        {
+            "secuencia": "19",
+            "file": "3AV.MP4",
+            "duration": "24:25",
+            "programe": "ALMA DE VINO EPISODIO 3",
+            "totalSeconds": 1465
+        },
+        {
+            "secuencia": "19",
+            "file": "25BINT",
+            "duration": "29:16",
+            "programe": "THE PAYA ROCKER PANCHITO",
+            "totalSeconds": 1756
+        },
+        {
+            "secuencia": "19",
+            "file": "2BB",
+            "duration": "31:33",
+            "programe": "ALVARO CARRILLO JR",
+            "totalSeconds": 1893
+        },
+        {
+            "secuencia": "19",
+            "file": "54BINT",
+            "duration": "31:08",
+            "programe": "FEDERICO VALE CHIRINOS EL HIMNO MEXICANO",
+            "totalSeconds": 1868
+        },
+        {
+            "secuencia": "19",
+            "file": "11PAM",
+            "duration": "52:51",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 8",
+            "totalSeconds": 3171
+        }
+    ],
+    "SECUENCIA_20": [
+        {
+            "secuencia": "20",
+            "file": "20FIT.mp4",
+            "duration": "8:35",
+            "programe": "DON CAFETO RESTAURANT MR GERMAN GALLEGOS",
+            "totalSeconds": 515
+        },
+        {
+            "secuencia": "20",
+            "file": "CC T1 EP 4.mp4",
+            "duration": "52:35",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 4",
+            "totalSeconds": 3155
+        },
+        {
+            "secuencia": "20",
+            "file": "CC T2 EP 4.mp4",
+            "duration": "24:16",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 4",
+            "totalSeconds": 1456
+        },
+        {
+            "secuencia": "20",
+            "file": "5FIT.mp4",
+            "duration": "7:55",
+            "programe": "COZUMEL DANY ORCE",
+            "totalSeconds": 475
+        },
+        {
+            "secuencia": "20",
+            "file": "35FIT.mp4",
+            "duration": "7:59",
+            "programe": "WORK OUT SHEILA PEREZ Y DANY ORCE",
+            "totalSeconds": 479
+        },
+        {
+            "secuencia": "20",
+            "file": "4AV.MP4",
+            "duration": "23:32",
+            "programe": "ALMA DE VINO EPISODIO 4",
+            "totalSeconds": 1412
+        },
+        {
+            "secuencia": "20",
+            "file": "26BINT",
+            "duration": "32:16",
+            "programe": "DIA DE LAS MADRES",
+            "totalSeconds": 1936
+        },
+        {
+            "secuencia": "20",
+            "file": "39BB",
+            "duration": "27:05",
+            "programe": "JUAN BARRAGAN COMUNICADOR",
+            "totalSeconds": 1625
+        },
+        {
+            "secuencia": "20",
+            "file": "55BINT",
+            "duration": "29:46",
+            "programe": "GABRIEL COBAYASSI MADE IN SPANISH DOBLAJE",
+            "totalSeconds": 1786
+        },
+        {
+            "secuencia": "20",
+            "file": "12PAM",
+            "duration": "43:49",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 9",
+            "totalSeconds": 2629
+        }
+    ],
+    "SECUENCIA_21": [
+        {
+            "secuencia": "21",
+            "file": "21FIT.mp4",
+            "duration": "8:02",
+            "programe": "RUTINA GLUTEOS Y VISTA AL DEL MAR LATINO DANY ORCE",
+            "totalSeconds": 482
+        },
+        {
+            "secuencia": "21",
+            "file": "CC T1 EP 5.mp4",
+            "duration": "49:17",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 5",
+            "totalSeconds": 2957
+        },
+        {
+            "secuencia": "21",
+            "file": "CC T2 EP 5.mp4",
+            "duration": "24:16",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 5",
+            "totalSeconds": 1456
+        },
+        {
+            "secuencia": "21",
+            "file": "6FIT.mp4",
+            "duration": "1:18",
+            "programe": "ESPECIAL ISLA MUJERES DANY ORCE",
+            "totalSeconds": 78
+        },
+        {
+            "secuencia": "21",
+            "file": "36FIT.mp4",
+            "duration": "3:38",
+            "programe": "GYM SERIE GIGANTE  WALDO GARCIA",
+            "totalSeconds": 218
+        },
+        {
+            "secuencia": "21",
+            "file": "5AV.MP4",
+            "duration": "23:22",
+            "programe": "ALMA DE VINO EPISODIO 5",
+            "totalSeconds": 1402
+        },
+        {
+            "secuencia": "21",
+            "file": "50BB",
+            "duration": "27:31",
+            "programe": "ENTREVISTA EVER MORA CARACTERIZADOR",
+            "totalSeconds": 1651
+        },
+        {
+            "secuencia": "21",
+            "file": "56BINT",
+            "duration": "30:53",
+            "programe": "MAJO RODRIGUEZ PILOTO PROFESIONAL MX",
+            "totalSeconds": 1853
+        },
+        {
+            "secuencia": "21",
+            "file": "1OFEC",
+            "duration": "2:52",
+            "programe": "ALIADO CONSTANTE",
+            "totalSeconds": 172
+        },
+        {
+            "secuencia": "21",
+            "file": "2OFEC",
+            "duration": "2:55",
+            "programe": "OFEC VA AL FRENTE",
+            "totalSeconds": 175
+        },
+        {
+            "secuencia": "21",
+            "file": "MC1",
+            "duration": "2:18",
+            "programe": "SAVAGE MYLADONNA",
+            "totalSeconds": 138
+        },
+        {
+            "secuencia": "21",
+            "file": "13PAM",
+            "duration": "57:31",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 10",
+            "totalSeconds": 3451
+        },
+        {
+            "secuencia": "21",
+            "file": "1BINT",
+            "duration": "32:48",
+            "programe": "LA PSICOTERAPIA  EN EL MUNDO DR KELVIN GARFIAS",
+            "totalSeconds": 1968
+        },
+        {
+            "secuencia": "21",
+            "file": "24BINT",
+            "duration": "25:58",
+            "programe": "GRACIELA FERREIRO ASOCIACION DE ARTISTAS PLASTICOS AC",
+            "totalSeconds": 1558
+        }
+    ],
+    "SECUENCIA_22": [
+        {
+            "secuencia": "22",
+            "file": "22FIT.mp4",
+            "duration": "11:33",
+            "programe": "FOOD FIT CARLA VANEGAS",
+            "totalSeconds": 693
+        },
+        {
+            "secuencia": "22",
+            "file": "CC T1 EP 6.mp4",
+            "duration": "24:09",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 6",
+            "totalSeconds": 1449
+        },
+        {
+            "secuencia": "22",
+            "file": "CC T2 EP 6.mp4",
+            "duration": "49:17",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 6",
+            "totalSeconds": 2957
+        },
+        {
+            "secuencia": "22",
+            "file": "7FIT.mp4",
+            "duration": "1:59",
+            "programe": "ESPECIAL ISLA MUJERES SHAILA PEREZ",
+            "totalSeconds": 119
+        },
+        {
+            "secuencia": "22",
+            "file": "37FIT.mp4",
+            "duration": "6:15",
+            "programe": " GYM WALDO GARCIA CAMPEON MUNDIAL DE FISICO CULTURISMO",
+            "totalSeconds": 375
+        },
+        {
+            "secuencia": "22",
+            "file": "6AV.MP4",
+            "duration": "24:11",
+            "programe": "ALMA DE VINO EPISODIO 6",
+            "totalSeconds": 1451
+        },
+        {
+            "secuencia": "22",
+            "file": "57BINT",
+            "duration": "34:24",
+            "programe": "MARY VILLALOBOS CAMPEONA MUNDIAL DE BOX",
+            "totalSeconds": 2064
+        },
+        {
+            "secuencia": "22",
+            "file": "MC2",
+            "duration": "2:49",
+            "programe": "BUMBLBEE MYLADONNA",
+            "totalSeconds": 169
+        },
+        {
+            "secuencia": "22",
+            "file": "14PAM",
+            "duration": "42:35",
+            "programe": "POR AMOR A MEXICO RAFFA VALDERRAMA  EP 11",
+            "totalSeconds": 2555
+        },
+        {
+            "secuencia": "22",
+            "file": "40BB",
+            "duration": "29:32",
+            "programe": "INSPIRACION ETNICA LILIAN MONTAÑO",
+            "totalSeconds": 1772
+        },
+        {
+            "secuencia": "22",
+            "file": "2BINT",
+            "duration": "32:55",
+            "programe": "LA TERAPIA INTEGRATIVA DR LUIS GARFIAS",
+            "totalSeconds": 1975
+        }
+    ],
+    "SECUENCIA_23": [
+        {
+            "secuencia": "23",
+            "file": "23FIT.mp4",
+            "duration": "1:39",
+            "programe": "GRETA SUSA ",
+            "totalSeconds": 99
+        },
+        {
+            "secuencia": "23",
+            "file": "CC T1 EP 7.mp4",
+            "duration": "49:19",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 7",
+            "totalSeconds": 2959
+        },
+        {
+            "secuencia": "23",
+            "file": "CC T2 EP 7.mp4",
+            "duration": "49:14",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 7",
+            "totalSeconds": 2954
+        },
+        {
+            "secuencia": "23",
+            "file": "8FIT.mp4",
+            "duration": "9:20",
+            "programe": "ENTREVISTA COORDINADOR GENERAL DEL CEA",
+            "totalSeconds": 560
+        },
+        {
+            "secuencia": "23",
+            "file": "38FIT.mp4",
+            "duration": "3:23",
+            "programe": "ENTREVISTA WALDO GARCIA",
+            "totalSeconds": 203
+        },
+        {
+            "secuencia": "23",
+            "file": "7AV.MP4",
+            "duration": "24:08",
+            "programe": "ALMA DE VINO EPISODIO 7",
+            "totalSeconds": 1448
+        },
+        {
+            "secuencia": "23",
+            "file": "58BINT",
+            "duration": "32:09",
+            "programe": "NOI KURI ESCULTORA",
+            "totalSeconds": 1929
+        },
+        {
+            "secuencia": "23",
+            "file": "MC3",
+            "duration": "2:46",
+            "programe": "PLOMO MYLADONNA",
+            "totalSeconds": 166
+        },
+        {
+            "secuencia": "23",
+            "file": "3BB",
+            "duration": "29:13",
+            "programe": "ARI ARTE MANAGER COUCH ARIADNA ARTEAGA",
+            "totalSeconds": 1753
+        },
+        {
+            "secuencia": "23",
+            "file": "3BINT",
+            "duration": "27:49",
+            "programe": "CURADOR DE ARTE RICARDO CAMACHO",
+            "totalSeconds": 1669
+        }
+    ],
+    "SECUENCIA_24": [
+        {
+            "secuencia": "24",
+            "file": "24FIT.mp4",
+            "duration": "11:11",
+            "programe": "BCANOS BEACH CLUB  ",
+            "totalSeconds": 671
+        },
+        {
+            "secuencia": "24",
+            "file": "CC T1 EP 8.mp4",
+            "duration": "49:08",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 8",
+            "totalSeconds": 2948
+        },
+        {
+            "secuencia": "24",
+            "file": "CC T2 EP 8.mp4",
+            "duration": "24:43",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 8",
+            "totalSeconds": 1483
+        },
+        {
+            "secuencia": "24",
+            "file": "9FIT.mp4",
+            "duration": "1:25",
+            "programe": "ESPECIAL ISLA MUJERES DANY ORCE",
+            "totalSeconds": 85
+        },
+        {
+            "secuencia": "24",
+            "file": "39FIT.mp4",
+            "duration": "8:07",
+            "programe": "VISITA PARQUE ECOLOGICO PUNTA SUR LAGUNA COLUMBIA",
+            "totalSeconds": 487
+        },
+        {
+            "secuencia": "24",
+            "file": "8AV.MP4",
+            "duration": "24:37",
+            "programe": "ALMA DE VINO EPISODIO 8",
+            "totalSeconds": 1477
+        },
+        {
+            "secuencia": "24",
+            "file": "59BINT",
+            "duration": "32:25",
+            "programe": "FUNDACION TODO POR PATITAS",
+            "totalSeconds": 1945
+        },
+        {
+            "secuencia": "24",
+            "file": "4BB",
+            "duration": "23:51",
+            "programe": "CONSPIRACION INTIMA BRENDA KELLY G",
+            "totalSeconds": 1431
+        },
+        {
+            "secuencia": "24",
+            "file": "4BINT",
+            "duration": "31:39",
+            "programe": "SHOW PLAY EMTRETAIMENT GISSELLE MARIN",
+            "totalSeconds": 1899
+        },
+        {
+            "secuencia": "24",
+            "file": "25BINT",
+            "duration": "29:16",
+            "programe": "THE PAYA ROCKER PANCHITO",
+            "totalSeconds": 1756
+        }
+    ],
+    "SECUENCIA_25": [
+        {
+            "secuencia": "25",
+            "file": "25FIT.mp4",
+            "duration": "1:11",
+            "programe": "RETO EAT CHILES ",
+            "totalSeconds": 71
+        },
+        {
+            "secuencia": "25",
+            "file": "CC T1 EP 9.mp4",
+            "duration": "50:14",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 9",
+            "totalSeconds": 3014
+        },
+        {
+            "secuencia": "25",
+            "file": "CC T2 EP 9.mp4",
+            "duration": "44:57",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 9",
+            "totalSeconds": 2697
+        },
+        {
+            "secuencia": "25",
+            "file": "10FIT.mp4",
+            "duration": "8:07",
+            "programe": "ESPECIAL SUBMARINO ATLANTIS DANY ORCE",
+            "totalSeconds": 487
+        },
+        {
+            "secuencia": "25",
+            "file": "40FIT.mp4",
+            "duration": "8:27",
+            "programe": "ENTREVISTA PREVIA IRON MAN COZUMEL MARCOS VELAZQUEZ",
+            "totalSeconds": 507
+        },
+        {
+            "secuencia": "25",
+            "file": "1AV.MP4",
+            "duration": "23:05",
+            "programe": "ALMA DE VINO EPISODIO 1",
+            "totalSeconds": 1385
+        },
+        {
+            "secuencia": "25",
+            "file": "60BINT",
+            "duration": "31:24",
+            "programe": "MUSEO INTERACTIVO DE ECONOMÍA CD MEX",
+            "totalSeconds": 1884
+        },
+        {
+            "secuencia": "25",
+            "file": "5BB",
+            "duration": "24:49",
+            "programe": "REHABILITACION Y MEDICINA BIOLOGICA  DR LUIS GARFIAS",
+            "totalSeconds": 1489
+        },
+        {
+            "secuencia": "25",
+            "file": "5BINT",
+            "duration": "28:15",
+            "programe": "EL AUTISMO FUNDACION VALENTINA ISIS SARAI BOLAÑOS",
+            "totalSeconds": 1695
+        }
+    ],
+    "SECUENCIA_26": [
+        {
+            "secuencia": "26",
+            "file": "26FIT.mp4",
+            "duration": "1:42",
+            "programe": "SENTADILLAS JEFFERSON WALDO GARCIA",
+            "totalSeconds": 102
+        },
+        {
+            "secuencia": "26",
+            "file": "CC T1 EP 10.mp4",
+            "duration": "50:39",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 10",
+            "totalSeconds": 3039
+        },
+        {
+            "secuencia": "26",
+            "file": "CC T2 EP 10.mp4",
+            "duration": "24:35",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 10",
+            "totalSeconds": 1475
+        },
+        {
+            "secuencia": "26",
+            "file": "11FIT.mp4",
+            "duration": "6:55",
+            "programe": "ESPECIAL CASA MISION  COZUMEL DANY ORCE",
+            "totalSeconds": 415
+        },
+        {
+            "secuencia": "26",
+            "file": "41FIT.mp4",
+            "duration": "7:59",
+            "programe": "VISITA PARQUE PUNTA AZUL CASA DEL FARERO",
+            "totalSeconds": 479
+        },
+        {
+            "secuencia": "26",
+            "file": "2AV.MP4",
+            "duration": "23:11",
+            "programe": "ALMA DE VINO EPISODIO 2",
+            "totalSeconds": 1391
+        },
+        {
+            "secuencia": "26",
+            "file": "61BINT",
+            "duration": "34:00",
+            "programe": "CAMINO AL MICTLAN",
+            "totalSeconds": 2040
+        },
+        {
+            "secuencia": "26",
+            "file": "8BB",
+            "duration": "24:23",
+            "programe": "EL AUTISMO FUNDACION VALENTINA ISIS SARAI BOLAÑOS",
+            "totalSeconds": 1463
+        },
+        {
+            "secuencia": "26",
+            "file": "8BINT",
+            "duration": "25:40",
+            "programe": "ANTONIETA TITO DREINHUFFER",
+            "totalSeconds": 1540
+        }
+    ],
+    "SECUENCIA_27": [
+        {
+            "secuencia": "27",
+            "file": "27FIT.mp4",
+            "duration": "8:02",
+            "programe": "PESCA DEPORTIVA SHAILA PEREZ",
+            "totalSeconds": 482
+        },
+        {
+            "secuencia": "27",
+            "file": "CC T1 EP 11.mp4",
+            "duration": "49:04",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 11",
+            "totalSeconds": 2944
+        },
+        {
+            "secuencia": "27",
+            "file": "CC T2 EP 11.mp4",
+            "duration": "24:34",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 11",
+            "totalSeconds": 1474
+        },
+        {
+            "secuencia": "27",
+            "file": "12FIT.mp4",
+            "duration": "8:00",
+            "programe": "ESPECIAL CENOTE SANTA CRUZ EN TULUM",
+            "totalSeconds": 480
+        },
+        {
+            "secuencia": "27",
+            "file": "42FIT.mp4",
+            "duration": "8:44",
+            "programe": "PESCA DEPORTIVA ENTREVISTA ANTHONY MENDILLO",
+            "totalSeconds": 524
+        },
+        {
+            "secuencia": "27",
+            "file": "3AV.MP4",
+            "duration": "24:25",
+            "programe": "ALMA DE VINO EPISODIO 3",
+            "totalSeconds": 1465
+        },
+        {
+            "secuencia": "27",
+            "file": "62BINT",
+            "duration": "30:42",
+            "programe": "LOS CLONES",
+            "totalSeconds": 1842
+        },
+        {
+            "secuencia": "27",
+            "file": "MC1",
+            "duration": "2:18",
+            "programe": "SAVAGE MYLADONNA",
+            "totalSeconds": 138
+        },
+        {
+            "secuencia": "27",
+            "file": "9BB",
+            "duration": "26:09",
+            "programe": "ASI DE SIMPLE ADRI PARDO Y JUAN PABLO ROCHA",
+            "totalSeconds": 1569
+        },
+        {
+            "secuencia": "27",
+            "file": "9BINT",
+            "duration": "31:24",
+            "programe": "NEURO ABUNDANCIA VERONICA DEL CASTILLO",
+            "totalSeconds": 1884
+        },
+        {
+            "secuencia": "27",
+            "file": "26BINT",
+            "duration": "32:16",
+            "programe": "DIA DE LAS MADRES",
+            "totalSeconds": 1936
+        }
+    ],
+    "SECUENCIA_28": [
+        {
+            "secuencia": "28",
+            "file": "28FIT.mp4",
+            "duration": "7:52",
+            "programe": "ICE BAR ISLA MUJERES SHAILA PEREZ",
+            "totalSeconds": 472
+        },
+        {
+            "secuencia": "28",
+            "file": "CC T1 EP 12.mp4",
+            "duration": "49:18",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 12",
+            "totalSeconds": 2958
+        },
+        {
+            "secuencia": "28",
+            "file": "CC T2 EP 12.mp4",
+            "duration": "24:46",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 12",
+            "totalSeconds": 1486
+        },
+        {
+            "secuencia": "28",
+            "file": "13FIT.mp4",
+            "duration": "7:37",
+            "programe": "ESPECIAL PLAYA BAHÍA  HOTEL AKUMAL CARIBE",
+            "totalSeconds": 457
+        },
+        {
+            "secuencia": "28",
+            "file": "43FIT.mp4",
+            "duration": "10:53",
+            "programe": "WALDOS FITNESS NANCY RODRIGUEZ",
+            "totalSeconds": 653
+        },
+        {
+            "secuencia": "28",
+            "file": "4AV.MP4",
+            "duration": "23:32",
+            "programe": "ALMA DE VINO EPISODIO 4",
+            "totalSeconds": 1412
+        },
+        {
+            "secuencia": "28",
+            "file": "63BINT",
+            "duration": "32:03",
+            "programe": "ALEXANDRA IN WONDERLAND",
+            "totalSeconds": 1923
+        },
+        {
+            "secuencia": "28",
+            "file": "1OFEC",
+            "duration": "2:52",
+            "programe": "ALIADO CONSTANTE",
+            "totalSeconds": 172
+        },
+        {
+            "secuencia": "28",
+            "file": "2OFEC",
+            "duration": "2:55",
+            "programe": "OFEC VA AL FRENTE",
+            "totalSeconds": 175
+        },
+        {
+            "secuencia": "28",
+            "file": "MC2",
+            "duration": "2:49",
+            "programe": "BUMBLBEE MYLADONNA",
+            "totalSeconds": 169
+        },
+        {
+            "secuencia": "28",
+            "file": "12BB",
+            "duration": "25:32",
+            "programe": "MARIO QUINTAL TAROTISTA ENERGETICO",
+            "totalSeconds": 1532
+        },
+        {
+            "secuencia": "28",
+            "file": "10BINT",
+            "duration": "30:49",
+            "programe": "SI SOY YO NO ERES TU DAMIELA CARBVLLO",
+            "totalSeconds": 1849
+        }
+    ],
+    "SECUENCIA_29": [
+        {
+            "secuencia": "29",
+            "file": "29FIT.mp4",
+            "duration": "7:07",
+            "programe": "LUGARES Y ACTIVIDADES ISLA COZUMEL SHAILA PEREZ",
+            "totalSeconds": 427
+        },
+        {
+            "secuencia": "29",
+            "file": "CC T1 EP 13.mp4",
+            "duration": "49:48",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 13",
+            "totalSeconds": 2988
+        },
+        {
+            "secuencia": "29",
+            "file": "CC T1 EP 14.mp4",
+            "duration": "49:19",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 14",
+            "totalSeconds": 2959
+        },
+        {
+            "secuencia": "29",
+            "file": "CC T2 EP 13.mp4",
+            "duration": "24:01",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 13",
+            "totalSeconds": 1441
+        },
+        {
+            "secuencia": "29",
+            "file": "14FIT.mp4",
+            "duration": "7:35",
+            "programe": "AVENTURA KAYAK Y PADDLE BOARD",
+            "totalSeconds": 455
+        },
+        {
+            "secuencia": "29",
+            "file": "44FIT.mp4",
+            "duration": "7:59",
+            "programe": "VISITA RESTAURENTE LAS HAMACAS  SHEILA PEREZ",
+            "totalSeconds": 479
+        },
+        {
+            "secuencia": "29",
+            "file": "5AV.MP4",
+            "duration": "23:22",
+            "programe": "ALMA DE VINO EPISODIO 5",
+            "totalSeconds": 1402
+        },
+        {
+            "secuencia": "29",
+            "file": "6AV.MP4",
+            "duration": "24:11",
+            "programe": "ALMA DE VINO EPISODIO 6",
+            "totalSeconds": 1451
+        },
+        {
+            "secuencia": "29",
+            "file": "64BINT",
+            "duration": "29:34",
+            "programe": "ADREW ALMAZAN DIRECTOR DEL CEDAT",
+            "totalSeconds": 1774
+        },
+        {
+            "secuencia": "29",
+            "file": "MC3",
+            "duration": "2:46",
+            "programe": "PLOMO MYLADONNA",
+            "totalSeconds": 166
+        },
+        {
+            "secuencia": "29",
+            "file": "13BB",
+            "duration": "26:15",
+            "programe": "MARIA URIAS DISEÑADORA DE JOYAS",
+            "totalSeconds": 1575
+        },
+        {
+            "secuencia": "29",
+            "file": "11BINT",
+            "duration": "32:27",
+            "programe": "HANNA DE LAMADRID ACTIVISTA SOCIAL",
+            "totalSeconds": 1947
+        }
+    ],
+    "SECUENCIA_30": [
+        {
+            "secuencia": "30",
+            "file": "30FIT.mp4",
+            "duration": "8:09",
+            "programe": "IRON MAN COZUMEL SHAILA PEREZ",
+            "totalSeconds": 489
+        },
+        {
+            "secuencia": "30",
+            "file": "CC T1 EP 15 .mp4",
+            "duration": "49:23",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 15",
+            "totalSeconds": 2963
+        },
+        {
+            "secuencia": "30",
+            "file": "CC T1 EP 16 .mp4",
+            "duration": "49:33",
+            "programe": "CHICAS DE CALENDARIO T1 EPISODIO 16",
+            "totalSeconds": 2973
+        },
+        {
+            "secuencia": "30",
+            "file": "CC T2 EP 14.mp4",
+            "duration": "23:59",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 14",
+            "totalSeconds": 1439
+        },
+        {
+            "secuencia": "30",
+            "file": "CC T2 EP 15.mp4",
+            "duration": "24:28",
+            "programe": "CHICAS DE CALENDARIO T2 EPISODIO 15",
+            "totalSeconds": 1468
+        },
+        {
+            "secuencia": "30",
+            "file": "15FIT.mp4",
+            "duration": "8:45",
+            "programe": "VISITA ULTRA CARGA 3 KENYA VALENCIA OFICIAL",
+            "totalSeconds": 525
+        },
+        {
+            "secuencia": "30",
+            "file": "45FIT.mp4",
+            "duration": "15:05",
+            "programe": "ENTRENAMIENTO WALDO GARCIA",
+            "totalSeconds": 905
+        },
+        {
+            "secuencia": "30",
+            "file": "46FIT.mp4",
+            "duration": "2:54",
+            "programe": "RUTINAS PARA ABDOMEN",
+            "totalSeconds": 174
+        },
+        {
+            "secuencia": "30",
+            "file": "7AV.MP4",
+            "duration": "24:08",
+            "programe": "ALMA DE VINO EPISODIO 7",
+            "totalSeconds": 1448
+        },
+        {
+            "secuencia": "30",
+            "file": "8AV.MP4",
+            "duration": "24:37",
+            "programe": "ALMA DE VINO EPISODIO 8",
+            "totalSeconds": 1477
+        },
+        {
+            "secuencia": "30",
+            "file": "65BINT.MP4",
+            "duration": "30:24",
+            "programe": "ENTREVISTA MANY GUZMAN JR",
+            "totalSeconds": 1824
+        },
+        {
+            "secuencia": "30",
+            "file": "66BINT.MP4",
+            "duration": "32:52",
+            "programe": "LA MAFIA MEXICANA ESCRITOR ANTONIO EDUARDO COSS",
+            "totalSeconds": 1972
+        },
+        {
+            "secuencia": "30",
+            "file": "16BB",
+            "duration": "31:33",
+            "programe": "ANDRES GUTIERREZ ACTOR DE DOBLAJE",
+            "totalSeconds": 1893
+        },
+        {
+            "secuencia": "30",
+            "file": "14BINT.MP4",
+            "duration": "28:21",
+            "programe": "EMBAJADA DE MALASYA EN MEXICO",
+            "totalSeconds": 1701
+        }
+    ]
+}
