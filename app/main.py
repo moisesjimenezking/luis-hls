@@ -139,20 +139,19 @@ def view_json():
         json_content = f.read()
     
     result = dict()
-    logging.debug(str(json_content))
-    logging.debug(str(type(json_content)))
-    
-    for secuencia in json_content:
-        logging.debug(str(secuencia))
-        if isinstance(secuencia, list):
-            result.update({secuencia:[]})
-            
-            for obj in secuencia:
-                if '.MP4' not in obj['file'].upper():
-                    obj['file'] = f"{obj['file']}.MP4"
-                    
-                obj['file'] = f"https://cuaimateam.online/api/preview?name={obj['file'].replace('MP4', 'mp4')}"
-                
+
+    for secuencia, lista_videos in json_content.items():  # 🔹 Recorrer correctamente
+
+        if isinstance(lista_videos, list):  # 🔹 Verifica que sea una lista
+            result[secuencia] = []  # Crear una nueva lista en el resultado
+
+            for obj in lista_videos:
+                if "file" in obj:  # 🔹 Verifica que "file" exista en el objeto
+                    if ".MP4" not in obj["file"].upper():
+                        obj["file"] = f"{obj['file']}.MP4"
+
+                    obj["file"] = f"https://cuaimateam.online/api/preview?name={obj['file'].replace('MP4', 'mp4')}"
+
                 result[secuencia].append(obj)
                 
         
