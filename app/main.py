@@ -2,7 +2,7 @@ import os
 import subprocess
 import threading
 import time
-from flask import Flask, Response, request, jsonify, send_from_directory
+from flask import Flask, Response, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -22,6 +22,8 @@ video_queue = []
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 XML_FILE = os.path.join(BASE_DIR, "app", "public", "epg.xml")
 JSON_FILE = os.path.join(BASE_DIR, "app", "public", "cuaimaTeam.json")
+
+PUBLIC_DIR = "./public"
 
 def stream_videos():
     """Función para reproducir videos en cola secuencialmente."""
@@ -56,15 +58,17 @@ def stream_videos():
 
 @app.route("/api/view_epg")
 def view_epg():
+    file_xlm = os.path.join(PUBLIC_DIR, "epg.xml")
     """Devuelve el XML para verlo en el navegador."""
-    with open(XML_FILE, "r", encoding="utf-8") as f:
+    with open(file_xlm, "r", encoding="utf-8") as f:
         xml_content = f.read()
     return Response(xml_content, mimetype="application/xml")
 
 @app.route("/api/download_epg")
 def download_epg():
+    file_xlm = os.path.join(PUBLIC_DIR, "epg.xml")
     """Permite descargar el archivo XML."""
-    return send_file(XML_FILE, as_attachment=True)
+    return send_file(file_xlm, as_attachment=True)
 
 @app.route("/api/start", methods=["GET"])
 def start_stream():
@@ -92,10 +96,10 @@ def list_videos():
     videos = [f for f in os.listdir(VIDEOS_DIR) if f.endswith(".mp4")]
     return jsonify(videos)
 
-@app.route("/api/preview/<path:filename>", methods=["GET"])
-def preview_video(filename):
+@app.route("/api/preview", methods=["GET"])
+def preview_video():
     """Devuelve los primeros 30 segundos del video especificado."""
-    video_name = filename  # Obtener el nombre del video desde los parámetros de la URL
+    video_name = request.args.get("name")
     
     if not video_name:
         return jsonify({"error": "Debe proporcionar el nombre del video."}), 400

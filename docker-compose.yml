@@ -9,3 +9,4 @@ services:
     volumes:
       - ./videos:/app/videos:ro  # Solo lectura
       - ./app/hls:/app/hls_output  # Carpeta de salida HLS
+      - ./app/public:/app/public  # Carpeta de salida HLS
