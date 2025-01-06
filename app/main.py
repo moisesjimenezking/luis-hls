@@ -32,17 +32,6 @@ JSON_FILE = os.path.join(BASE_DIR, "app", "public", "cuaimaTeam.json")
 
 PUBLIC_DIR = "./public"
 
-import os
-import time
-import subprocess
-import requests
-
-VAST_URL = "URL_DEL_VAST"
-SEGMENT_DURATION = 10  # Duración de cada segmento en segundos
-HLS_OUTPUT_DIR = "ruta/salida/hls"
-VIDEOS_DIR = "ruta/videos"
-video_queue = []
-
 def get_vast_ad_url():
     """Obtiene la URL del video del VAST tag."""
     try:
