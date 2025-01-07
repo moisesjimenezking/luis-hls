@@ -7,6 +7,7 @@ import json
 import shutil
 import requests
 import xml.etree.ElementTree as ET
+import multiprocessing
 
 from flask import Flask, Response, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
@@ -355,6 +356,9 @@ def view_json():
     return jsonify({"data": result})
 
 if __name__ == "__main__":
-    # Iniciar el hilo para manejar la cola de reproducción
-    stream_videos()
+    # Iniciar el proceso para manejar la cola de reproducción
+    process = multiprocessing.Process(target=stream_videos)
+    process.start()
+
+    # Iniciar el servidor Flask
     app.run(host="0.0.0.0", port=5000)
