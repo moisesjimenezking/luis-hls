@@ -161,6 +161,7 @@ def stream_videos():
 
                 # Procesar el video en segmentos de 480s
                 start_time = 0
+                segmentNumber = 0
                 while start_time < video_duration:
                     download_video_in_thread(INSERTED_VIDEO_PATH)
                     
@@ -177,7 +178,7 @@ def stream_videos():
                         "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
                         "-hls_list_size", str(PLAYLIST_LENGTH),
                         "-hls_flags", "independent_segments+delete_segments",
-                        "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
+                        "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, f"segment_{segmentNumber}.ts"),
                         os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
                     ]
 
@@ -189,6 +190,7 @@ def stream_videos():
                         break
 
                     start_time += SEGMENT_DURATION
+                    segmentNumber += 1
 
                     if start_time % 480 == 0 or start_time == video_duration:
                         # Insertar el video específico después de cada segmento
@@ -204,7 +206,7 @@ def stream_videos():
                                 "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
                                 "-hls_list_size", str(PLAYLIST_LENGTH),
                                 "-hls_flags", "independent_segments+delete_segments",
-                                "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
+                                "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_special.ts"),
                                 os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
                             ]
 
