@@ -172,16 +172,18 @@ def stream_videos():
                     segment_pipeline = [
                         "ffmpeg", "-re", "-ss", str(start_time), "-i", video_path,
                         "-t", str(SEGMENT_DURATION),
-                        "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency",
-                        "-b:v", "2000k", "-maxrate", "2000k", "-bufsize", "4000k",
+                        "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
+                        "-maxrate", "2000k", "-bufsize", "4000k",
                         "-g", "48", "-sc_threshold", "0",
                         "-c:a", "aac", "-b:a", "128k",
-                        "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
-                        "-hls_list_size", str(PLAYLIST_LENGTH),
-                        "-hls_flags", "append_list",
-                        "-hls_segment_filename", segment_filename,
+                        "-f", "hls",
+                        "-hls_time", str(SEGMENT_DURATION),
+                        "-hls_list_size", "0",  # No eliminar segmentos de la lista
+                        "-hls_flags", "independent_segments+append_list",  # No borrar la lista
+                        "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
                         os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
                     ]
+
 
                     try:
                         process = subprocess.Popen(segment_pipeline)
@@ -194,28 +196,31 @@ def stream_videos():
                     segmentNumber += 1
 
                     # Insertar el video específico después de cada segmento
-                    if start_time < video_duration:
-                        logging.debug(f"Insertando {INSERTED_VIDEO_PATH} entre segmentos")
-                        insert_segment_filename = os.path.join(HLS_OUTPUT_DIR, f"segment_{segmentNumber}.ts")
+                    if start_time % 480 == 0 or start_time >= video_duration:
+                        if os.path.exists(INSERTED_VIDEO_PATH):
+                            logging.debug(f"Insertando {INSERTED_VIDEO_PATH} después del segmento {segmentNumber}")
 
-                        insert_pipeline = [
-                            "ffmpeg", "-re", "-i", INSERTED_VIDEO_PATH,
-                            "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency",
-                            "-b:v", "2000k", "-maxrate", "2000k", "-bufsize", "4000k",
-                            "-g", "48", "-sc_threshold", "0",
-                            "-c:a", "aac", "-b:a", "128k",
-                            "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
-                            "-hls_list_size", str(PLAYLIST_LENGTH),
-                            "-hls_flags", "append_list",
-                            "-hls_segment_filename", insert_segment_filename,
-                            os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
-                        ]
+                            insert_pipeline = [
+                                "ffmpeg", "-re", "-i", INSERTED_VIDEO_PATH,
+                                "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
+                                "-maxrate", "2000k", "-bufsize", "4000k",
+                                "-g", "48", "-sc_threshold", "0",
+                                "-c:a", "aac", "-b:a", "128k",
+                                "-f", "hls",
+                                "-hls_time", str(SEGMENT_DURATION),
+                                "-hls_list_size", "0",
+                                "-hls_flags", "independent_segments+append_list",
+                                "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, f"segment_{segmentNumber}_ad.ts"),
+                                os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
+                            ]
 
-                        try:
-                            process = subprocess.Popen(insert_pipeline)
-                            process.wait()  # Esperar a que FFmpeg termine
-                        except Exception as e:
-                            logging.debug(f"Error al procesar {INSERTED_VIDEO_PATH}: {e}")
+                            try:
+                                process = subprocess.Popen(insert_pipeline)
+                                process.wait()
+                                segmentNumber += 1
+                            except Exception as e:
+                                logging.debug(f"Error al procesar la propaganda {INSERTED_VIDEO_PATH}: {e}")
+
 
                         segmentNumber += 1
 
