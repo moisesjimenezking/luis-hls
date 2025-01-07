@@ -356,5 +356,5 @@ def view_json():
 
 if __name__ == "__main__":
     # Iniciar el hilo para manejar la cola de reproducción
-    threading.Thread(target=stream_videos, daemon=True).start()
+    stream_videos()
     app.run(host="0.0.0.0", port=5000)
