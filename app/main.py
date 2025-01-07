@@ -20,7 +20,7 @@ VIDEOS_DIR = "./videos"
 HLS_OUTPUT_DIR = "./hls_output"
 
 # Configuración HLS
-SEGMENT_DURATION = 4  # Duración de cada segmento HLS (en segundos)
+SEGMENT_DURATION = 480  # Duración de cada segmento HLS (en segundos)
 PLAYLIST_LENGTH = 10   # Número de segmentos en la lista de reproducción
 
 # Cola de reproducción
@@ -129,6 +129,7 @@ def stream_videos():
     """Reproduce videos en segmentos de 480s, insertando un video específico entre cada porción."""
     global video_queue
     original_sequence = video_queue[:]  # Guardamos la secuencia original
+    segmentNumber = 0
 
     while True:
         if not video_queue:  # Reiniciar la cola si se vacía
@@ -140,7 +141,7 @@ def stream_videos():
 
             if os.path.exists(video_path):
                 logging.debug(f"Procesando: {current_video}")
-                
+
                 # Obtener la duración del video
                 try:
                     result = subprocess.run(
@@ -161,24 +162,24 @@ def stream_videos():
 
                 # Procesar el video en segmentos de 480s
                 start_time = 0
-                segmentNumber = 0
+
                 while start_time < video_duration:
-                    download_video_in_thread(INSERTED_VIDEO_PATH)
-                    
                     logging.debug(f"Reproduciendo segmento desde {start_time} segundos de {current_video}")
 
-                    # Configurar FFmpeg para transmitir un segmento del video
+                    # Configurar FFmpeg para generar segmentos continuos sin sobrescribir el M3U8
+                    segment_filename = os.path.join(HLS_OUTPUT_DIR, f"segment_{segmentNumber}.ts")
+
                     segment_pipeline = [
                         "ffmpeg", "-re", "-ss", str(start_time), "-i", video_path,
                         "-t", str(SEGMENT_DURATION),
-                        "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
-                        "-maxrate", "2000k", "-bufsize", "4000k",
+                        "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency",
+                        "-b:v", "2000k", "-maxrate", "2000k", "-bufsize", "4000k",
                         "-g", "48", "-sc_threshold", "0",
                         "-c:a", "aac", "-b:a", "128k",
                         "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
                         "-hls_list_size", str(PLAYLIST_LENGTH),
-                        "-hls_flags", "independent_segments+delete_segments",
-                        "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, f"segment_{segmentNumber}.ts"),
+                        "-hls_flags", "append_list",
+                        "-hls_segment_filename", segment_filename,
                         os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
                     ]
 
@@ -192,35 +193,38 @@ def stream_videos():
                     start_time += SEGMENT_DURATION
                     segmentNumber += 1
 
-                    if start_time % 480 == 0 or start_time == video_duration:
-                        # Insertar el video específico después de cada segmento
-                        inserted_video_path = os.path.join(INSERTED_VIDEO_PATH)
-                        if os.path.exists(inserted_video_path):
-                            logging.debug(f"Insertando {INSERTED_VIDEO_PATH} entre segmentos")
-                            insert_pipeline = [
-                                "ffmpeg", "-re", "-i", inserted_video_path,
-                                "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
-                                "-maxrate", "2000k", "-bufsize", "4000k",
-                                "-g", "48", "-sc_threshold", "0",
-                                "-c:a", "aac", "-b:a", "128k",
-                                "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
-                                "-hls_list_size", str(PLAYLIST_LENGTH),
-                                "-hls_flags", "independent_segments+delete_segments",
-                                "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_special.ts"),
-                                os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
-                            ]
+                    # Insertar el video específico después de cada segmento
+                    if start_time < video_duration:
+                        logging.debug(f"Insertando {INSERTED_VIDEO_PATH} entre segmentos")
+                        insert_segment_filename = os.path.join(HLS_OUTPUT_DIR, f"segment_{segmentNumber}.ts")
 
-                            try:
-                                process = subprocess.Popen(insert_pipeline)
-                                process.wait()  # Esperar a que FFmpeg termine
-                            except Exception as e:
-                                logging.debug(f"Error al procesar {inserted_video_path}: {e}")
+                        insert_pipeline = [
+                            "ffmpeg", "-re", "-i", INSERTED_VIDEO_PATH,
+                            "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency",
+                            "-b:v", "2000k", "-maxrate", "2000k", "-bufsize", "4000k",
+                            "-g", "48", "-sc_threshold", "0",
+                            "-c:a", "aac", "-b:a", "128k",
+                            "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
+                            "-hls_list_size", str(PLAYLIST_LENGTH),
+                            "-hls_flags", "append_list",
+                            "-hls_segment_filename", insert_segment_filename,
+                            os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
+                        ]
+
+                        try:
+                            process = subprocess.Popen(insert_pipeline)
+                            process.wait()  # Esperar a que FFmpeg termine
+                        except Exception as e:
+                            logging.debug(f"Error al procesar {INSERTED_VIDEO_PATH}: {e}")
+
+                        segmentNumber += 1
 
             else:
                 logging.debug(f"Video no encontrado: {current_video}")
         else:
             logging.debug("Esperando videos...")
             time.sleep(1)  # Espera breve para evitar uso excesivo de CPU
+
 
 
 @app.route("/api/view_epg")
