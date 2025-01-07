@@ -142,15 +142,21 @@ def stream_videos():
                 logging.debug(f"Procesando: {current_video}")
                 
                 # Obtener la duración del video
-                duration_cmd = [
-                    "ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
-                    "format=duration", "-of", "default=nologging.debug_wrappers=1:nokey=1", video_path
-                ]
-                
                 try:
-                    video_duration = float(subprocess.check_output(duration_cmd).decode().strip())
+                    result = subprocess.run(
+                        [
+                            "ffprobe", "-v", "error", "-select_streams", "v:0",
+                            "-show_entries", "format=duration",
+                            "-of", "default=noprint_wrappers=1:nokey=1", video_path
+                        ],
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+                    )
+                    video_duration = float(result.stdout.strip()) if result.stdout else None
+                    if video_duration is None:
+                        logging.error(f"Duración de {video_path} no encontrada")
+                        continue
                 except Exception as e:
-                    logging.debug(f"Error obteniendo duración de {current_video}: {e}")
+                    logging.error(f"Error obteniendo duración de {video_path}: {e}")
                     continue
 
                 # Procesar el video en segmentos de 480s
