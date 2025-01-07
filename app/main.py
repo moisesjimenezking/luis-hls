@@ -4,9 +4,6 @@ import threading
 import time
 import logging
 import json
-import requests
-import xml.etree.ElementTree as ET
-
 from flask import Flask, Response, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
 
@@ -32,130 +29,7 @@ JSON_FILE = os.path.join(BASE_DIR, "app", "public", "cuaimaTeam.json")
 
 PUBLIC_DIR = "./public"
 
-def get_vast_ad_url():
-    """Obtiene la URL del video del VAST tag."""
-    try:
-        # response = requests.get(vast_url, timeout=10)
-        # response.raise_for_status()
-        vast_xml = """
-            <VAST version="3.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-                <Ad id="20001">
-                    <InLine>
-                        <AdSystem version="4.0">iabtechlab</AdSystem>
-                        <AdTitle>iabtechlab video ad</AdTitle>
-                        <Pricing model="cpm" currency="USD">
-                            <![CDATA[ 25.00 ]]>
-                        </Pricing>
-                        <Error>http://example.com/error</Error>
-                        <Impression id="Impression-ID">http://example.com/track/impression</Impression>
-                        <Creatives>
-                            <Creative id="5480" sequence="1">
-                                <Linear>
-                                    <Duration>00:00:16</Duration>
-                                    <TrackingEvents>
-                                        <Tracking event="start">http://example.com/tracking/start</Tracking>
-                                        <Tracking event="firstQuartile">http://example.com/tracking/firstQuartile</Tracking>
-                                        <Tracking event="midpoint">http://example.com/tracking/midpoint</Tracking>
-                                        <Tracking event="thirdQuartile">http://example.com/tracking/thirdQuartile</Tracking>
-                                        <Tracking event="complete">http://example.com/tracking/complete</Tracking>
-                                        <Tracking event="progress" offset="00:00:10">http://example.com/tracking/progress-10</Tracking>
-                                    </TrackingEvents>
-                                    <VideoClicks>
-                                        <ClickThrough id="blog">
-                                            <![CDATA[https://iabtechlab.com]]>
-                                        </ClickThrough>
-                                    </VideoClicks>
-                                    <MediaFiles>
-                                        <MediaFile id="5241" delivery="progressive" type="video/mp4" bitrate="500" width="400" height="300" minBitrate="360" maxBitrate="1080" scalable="1" maintainAspectRatio="1" codec="0" apiFramework="VAST">
-                                            <![CDATA[https://iab-publicfiles.s3.amazonaws.com/vast/VAST-4.0-Short-Intro.mp4]]>
-                                        </MediaFile>
-                                    </MediaFiles>
-
-
-                                </Linear>
-                            </Creative>
-                        </Creatives>
-                        <Extensions>
-                            <Extension type="iab-Count">
-                                <total_available>
-                                    <![CDATA[ 2 ]]>
-                                </total_available>
-                            </Extension>
-                        </Extensions>
-                    </InLine>
-                </Ad>
-            </VAST>
-        """
-        
-        # Parsear XML
-        root = ET.fromstring(vast_xml)
-        
-        # Buscar la URL del archivo de video en el XML
-        for media_file in root.findall(".//MediaFile"):
-            video_url = media_file.text.strip()
-            if video_url:
-                return video_url
-
-    except Exception as e:
-        print(f"Error obteniendo el VAST tag: {e}")
-        return None
-
 def stream_videos():
-    """Reproduce videos de la cola y agrega anuncios cada 480 segundos."""
-    elapsed_time = 0
-    current_position = 0  # Guarda el tiempo donde se interrumpe
-
-    while True:
-        if video_queue:
-            current_video = video_queue.pop(0)
-            video_path = os.path.join(VIDEOS_DIR, current_video)
-
-            if os.path.exists(video_path):
-                print(f"▶️ Reproduciendo: {current_video} desde {current_position} segundos")
-                
-                process = subprocess.Popen([
-                    "ffmpeg", "-re", "-ss", str(current_position), "-i", video_path,  # ⬅️ Se reanuda desde `current_position`
-                    "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
-                    "-maxrate", "2000k", "-bufsize", "4000k",
-                    "-g", "48", "-sc_threshold", "0",
-                    "-c:a", "aac", "-b:a", "128k",
-                    "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
-                    "-hls_list_size", "10",
-                    "-hls_flags", "independent_segments+delete_segments",
-                    "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
-                    os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
-                ])
-
-                start_time = time.time()
-                while process.poll() is None:
-                    time.sleep(1)
-                    elapsed_time += 1
-                    current_position += 1  # ⬅️ Guardamos la posición actual
-
-                    if elapsed_time >= 480:
-                        process.terminate()  # Detener la transmisión actual
-                        ad_video = get_vast_ad_url()
-                        if ad_video:
-                            subprocess.run([
-                                "ffmpeg", "-re", "-i", ad_video,
-                                "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
-                                "-maxrate", "2000k", "-bufsize", "4000k",
-                                "-g", "48", "-sc_threshold", "0",
-                                "-c:a", "aac", "-b:a", "128k",
-                                "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
-                                "-hls_list_size", "10",
-                                "-hls_flags", "independent_segments+delete_segments",
-                                "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "ad_segment_%03d.ts"),
-                                os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
-                            ])
-                        elapsed_time = 0  # Reiniciar contador después del anuncio
-            else:
-                print(f"⚠️ Video {current_video} no encontrado.")
-        else:
-            time.sleep(1)
-
-
-def stream_videos_aux():
     """Función para reproducir videos en cola secuencialmente."""
     while True:
         if video_queue:
