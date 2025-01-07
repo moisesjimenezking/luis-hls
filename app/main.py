@@ -164,9 +164,9 @@ def stream_videos():
                 start_time = 0
 
                 while start_time < video_duration:
+                    download_video_in_thread(INSERTED_VIDEO_PATH)
                     logging.debug(f"Reproduciendo segmento desde {start_time} segundos de {current_video}")
 
-                    # Configurar FFmpeg para generar segmentos continuos sin sobrescribir el M3U8
                     segment_filename = os.path.join(HLS_OUTPUT_DIR, f"segment_{segmentNumber}.ts")
 
                     segment_pipeline = [
@@ -178,12 +178,11 @@ def stream_videos():
                         "-c:a", "aac", "-b:a", "128k",
                         "-f", "hls",
                         "-hls_time", str(SEGMENT_DURATION),
-                        "-hls_list_size", "0",  # No eliminar segmentos de la lista
-                        "-hls_flags", "independent_segments+append_list",  # No borrar la lista
-                        "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
+                        "-hls_list_size", "0",
+                        "-hls_flags", "independent_segments+append_list",
+                        "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, f"segment_%03d.ts"),
                         os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
                     ]
-
 
                     try:
                         process = subprocess.Popen(segment_pipeline)
@@ -195,7 +194,7 @@ def stream_videos():
                     start_time += SEGMENT_DURATION
                     segmentNumber += 1
 
-                    # Insertar el video específico después de cada segmento
+                    # Insertar propaganda después de cada segmento
                     if start_time % 480 == 0 or start_time >= video_duration:
                         if os.path.exists(INSERTED_VIDEO_PATH):
                             logging.debug(f"Insertando {INSERTED_VIDEO_PATH} después del segmento {segmentNumber}")
@@ -220,9 +219,6 @@ def stream_videos():
                                 segmentNumber += 1
                             except Exception as e:
                                 logging.debug(f"Error al procesar la propaganda {INSERTED_VIDEO_PATH}: {e}")
-
-
-                        segmentNumber += 1
 
             else:
                 logging.debug(f"Video no encontrado: {current_video}")
