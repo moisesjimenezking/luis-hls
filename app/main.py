@@ -128,10 +128,12 @@ def download_video_in_thread(output_path):
       
 def stream_videos():
     """Reproduce videos en segmentos de 480s, insertando un video específico entre cada porción."""
+    start_stream()
+    
     global video_queue
     original_sequence = video_queue[:]  # Guardamos la secuencia original
     segmentNumber = 0
-
+    
     while True:
         if not video_queue:  # Reiniciar la cola si se vacía
             video_queue = original_sequence[:]
