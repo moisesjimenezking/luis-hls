@@ -4,6 +4,10 @@ import threading
 import time
 import logging
 import json
+import shutil
+import requests
+import xml.etree.ElementTree as ET
+
 from flask import Flask, Response, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
 
@@ -29,36 +33,187 @@ JSON_FILE = os.path.join(BASE_DIR, "app", "public", "cuaimaTeam.json")
 
 PUBLIC_DIR = "./public"
 
+INSERTED_VIDEO_PATH = os.path.join(HLS_OUTPUT_DIR, "inserted_video.mp4")
+
+def get_vast_ad_url():
+    """Obtiene la URL del video del VAST tag."""
+    try:
+        # response = requests.get(vast_url, timeout=10)
+        # response.raise_for_status()
+        vast_xml = """
+            <VAST version="3.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                <Ad id="20001">
+                    <InLine>
+                        <AdSystem version="4.0">iabtechlab</AdSystem>
+                        <AdTitle>iabtechlab video ad</AdTitle>
+                        <Pricing model="cpm" currency="USD">
+                            <![CDATA[ 25.00 ]]>
+                        </Pricing>
+                        <Error>http://example.com/error</Error>
+                        <Impression id="Impression-ID">http://example.com/track/impression</Impression>
+                        <Creatives>
+                            <Creative id="5480" sequence="1">
+                                <Linear>
+                                    <Duration>00:00:16</Duration>
+                                    <TrackingEvents>
+                                        <Tracking event="start">http://example.com/tracking/start</Tracking>
+                                        <Tracking event="firstQuartile">http://example.com/tracking/firstQuartile</Tracking>
+                                        <Tracking event="midpoint">http://example.com/tracking/midpoint</Tracking>
+                                        <Tracking event="thirdQuartile">http://example.com/tracking/thirdQuartile</Tracking>
+                                        <Tracking event="complete">http://example.com/tracking/complete</Tracking>
+                                        <Tracking event="progress" offset="00:00:10">http://example.com/tracking/progress-10</Tracking>
+                                    </TrackingEvents>
+                                    <VideoClicks>
+                                        <ClickThrough id="blog">
+                                            <![CDATA[https://iabtechlab.com]]>
+                                        </ClickThrough>
+                                    </VideoClicks>
+                                    <MediaFiles>
+                                        <MediaFile id="5241" delivery="progressive" type="video/mp4" bitrate="500" width="400" height="300" minBitrate="360" maxBitrate="1080" scalable="1" maintainAspectRatio="1" codec="0" apiFramework="VAST">
+                                            <![CDATA[https://iab-publicfiles.s3.amazonaws.com/vast/VAST-4.0-Short-Intro.mp4]]>
+                                        </MediaFile>
+                                    </MediaFiles>
+
+
+                                </Linear>
+                            </Creative>
+                        </Creatives>
+                        <Extensions>
+                            <Extension type="iab-Count">
+                                <total_available>
+                                    <![CDATA[ 2 ]]>
+                                </total_available>
+                            </Extension>
+                        </Extensions>
+                    </InLine>
+                </Ad>
+            </VAST>
+        """
+        
+        # Parsear XML
+        root = ET.fromstring(vast_xml)
+        
+        # Buscar la URL del archivo de video en el XML
+        for media_file in root.findall(".//MediaFile"):
+            video_url = media_file.text.strip()
+            if video_url:
+                return video_url
+
+    except Exception as e:
+        logging.debug(f"Error obteniendo el VAST tag: {e}")
+        return None
+
+def download_video(output_path):
+    """Descarga un video desde una URL y lo guarda en output_path."""
+    try:
+        url = get_vast_ad_url()
+        if url is None:
+            return False
+        
+        response = requests.get(url, stream=True)
+        response.raise_for_status()
+        with open(output_path, "wb") as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+        logging.debug(f"Video descargado exitosamente: {output_path}")
+        return True
+    except Exception as e:
+        logging.debug(f"Error al descargar el video: {e}")
+        return False
+      
+def download_video_in_thread(output_path):
+    download_thread = threading.Thread(target=download_video, args=(output_path,))
+    download_thread.start()
+      
 def stream_videos():
-    """Función para reproducir videos en cola secuencialmente."""
+    """Reproduce videos en segmentos de 480s, insertando un video específico entre cada porción."""
+    global video_queue
+    original_sequence = video_queue[:]  # Guardamos la secuencia original
+
     while True:
+        if not video_queue:  # Reiniciar la cola si se vacía
+            video_queue = original_sequence[:]
+
         if video_queue:
             current_video = video_queue.pop(0)
             video_path = os.path.join(VIDEOS_DIR, current_video)
 
             if os.path.exists(video_path):
-                # Configuración del pipeline FFmpeg
-                pipeline = [
-                    "ffmpeg", "-re", "-i", video_path,
-                    "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
-                    "-maxrate", "2000k", "-bufsize", "4000k",
-                    "-g", "48",  # GOP size para mejorar la latencia
-                    "-sc_threshold", "0",  # Desactiva el threshold de corte de escenas
-                    "-c:a", "aac", "-b:a", "128k",
-                    "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
-                    "-hls_list_size", str(PLAYLIST_LENGTH),
-                    "-hls_flags", "independent_segments+delete_segments",
-                    "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
-                    os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
+                logging.debug(f"Procesando: {current_video}")
+                
+                # Obtener la duración del video
+                duration_cmd = [
+                    "ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries",
+                    "format=duration", "-of", "default=nologging.debug_wrappers=1:nokey=1", video_path
                 ]
+                
+                try:
+                    video_duration = float(subprocess.check_output(duration_cmd).decode().strip())
+                except Exception as e:
+                    logging.debug(f"Error obteniendo duración de {current_video}: {e}")
+                    continue
 
-                # Ejecutar FFmpeg
-                process = subprocess.Popen(pipeline)
-                process.wait()  # Esperar a que FFmpeg termine antes de pasar al siguiente video
+                # Procesar el video en segmentos de 480s
+                start_time = 0
+                while start_time < video_duration:
+                    download_video_in_thread(INSERTED_VIDEO_PATH)
+                    
+                    logging.debug(f"Reproduciendo segmento desde {start_time} segundos de {current_video}")
+
+                    # Configurar FFmpeg para transmitir un segmento del video
+                    segment_pipeline = [
+                        "ffmpeg", "-re", "-ss", str(start_time), "-i", video_path,
+                        "-t", str(SEGMENT_DURATION),
+                        "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
+                        "-maxrate", "2000k", "-bufsize", "4000k",
+                        "-g", "48", "-sc_threshold", "0",
+                        "-c:a", "aac", "-b:a", "128k",
+                        "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
+                        "-hls_list_size", str(PLAYLIST_LENGTH),
+                        "-hls_flags", "independent_segments+delete_segments",
+                        "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
+                        os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
+                    ]
+
+                    try:
+                        process = subprocess.Popen(segment_pipeline)
+                        process.wait()  # Esperar a que FFmpeg termine el segmento
+                    except Exception as e:
+                        logging.debug(f"Error al procesar segmento de {current_video}: {e}")
+                        break
+
+                    start_time += SEGMENT_DURATION
+
+                    if start_time % 480 == 0 or start_time == video_duration:
+                        # Insertar el video específico después de cada segmento
+                        inserted_video_path = os.path.join(INSERTED_VIDEO_PATH)
+                        if os.path.exists(inserted_video_path):
+                            logging.debug(f"Insertando {INSERTED_VIDEO_PATH} entre segmentos")
+                            insert_pipeline = [
+                                "ffmpeg", "-re", "-i", inserted_video_path,
+                                "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
+                                "-maxrate", "2000k", "-bufsize", "4000k",
+                                "-g", "48", "-sc_threshold", "0",
+                                "-c:a", "aac", "-b:a", "128k",
+                                "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
+                                "-hls_list_size", str(PLAYLIST_LENGTH),
+                                "-hls_flags", "independent_segments+delete_segments",
+                                "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
+                                os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
+                            ]
+
+                            try:
+                                process = subprocess.Popen(insert_pipeline)
+                                process.wait()  # Esperar a que FFmpeg termine
+                            except Exception as e:
+                                logging.debug(f"Error al procesar {inserted_video_path}: {e}")
+
             else:
-                print(f"Video {current_video} no encontrado.")
+                logging.debug(f"Video no encontrado: {current_video}")
         else:
-            time.sleep(1)  # Esperar un segundo antes de verificar la cola nuevamente
+            logging.debug("Esperando videos...")
+            time.sleep(1)  # Espera breve para evitar uso excesivo de CPU
+
 
 @app.route("/api/view_epg")
 def view_epg():
@@ -74,11 +229,29 @@ def download_epg():
     """Permite descargar el archivo XML."""
     return send_file(file_xlm, as_attachment=True)
 
+def cleanHlsDir():
+    # Limpiar la carpeta HLS_OUTPUT_DIR
+    if os.path.exists(HLS_OUTPUT_DIR):
+        for filename in os.listdir(HLS_OUTPUT_DIR):
+            file_path = os.path.join(HLS_OUTPUT_DIR, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)  # Elimina archivos y enlaces simbólicos
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)  # Elimina carpetas completas
+            except Exception as e:
+                return jsonify({"error": f"Error cleaning HLS output directory: {e}"}), 500
+    else:
+        return False
+    
+    return True
+
 @app.route("/api/start", methods=["GET"])
 def start_stream():
     """Inicia la transmisión siguiendo la secuencia predefinida."""
     global video_queue
     
+    cleanHlsDir()
     # Obtener todos los videos disponibles
     secuencia = ['CC T1 EP 1.mp4', '1AV.MP4', 'CC T2 EP 1.mp4', '40BB', 'C PE 1.mp4', '1BINT', 'CC T1 EP 2.mp4', '2AV.MP4', 'CC T2 EP 2.mp4', '3BB', 'C PE 2.mp4', '32FIT.mp4', '2FIT.mp4', '17FIT.mp4', 'CC T1 EP 3.mp4', '3AV.MP4', 'CC T2 EP 3.mp4', '4BB', 'C PE 3.mp4', '3BINT', 'MC3', '3FIT.mp4', '33FIT.mp4', '18FIT.mp4', 'CC T1 EP 4.mp4', '4AV.MP4', 'CC T2 EP 4.mp4', '5BB', '4FIT.mp4', '54BINT', '19FIT.mp4', '4BINT', 'CC T1 EP 5.mp4', '5AV.MP4', 'CC T2 EP 5.mp4', '8BB', '5FIT.mp4', '55BINT', '35FIT.mp4', '28BB', 'CC T1 EP 6.mp4', '6AV.MP4', 'CC T2 EP 6.mp4', '9BB', '6FIT.mp4', '56BINT', '36FIT.mp4', '21FIT.mp4', '8BINT', 'CC T1 EP 7.mp4', '7AV.MP4', 'CC T2 EP 7.mp4', '12BB', '1OFEC', '22FIT.mp4', '37FIT.mp4', '57BINT', 'CC T1 EP 8.mp4', '8AV.MP4', 'CC T2 EP 8.mp4', '13BB', '8FIT.mp4', '38FIT.mp4', '58BINT', '23FIT.mp4', '10BINT', 'CC T1 EP 9.mp4', '1AV.MP4', 'CC T2 EP 9.mp4', '16BB', '39FIT.mp4', '59BINT', '9FIT.mp4', '24FIT.mp4', 'CC T1 EP 10.mp4', '2AV.MP4', 'CC T2 EP 10.mp4', '2BB', '10FIT.mp4', '60BINT', '25FIT.mp4', '20BB', 'CC T1 EP 11.mp4', '3AV.MP4', 'CC T2 EP 11.mp4', '22BB', '11FIT.mp4', '41FIT.mp4', '61BINT', '26FIT.mp4', '39BB', 'CC T1 EP 12.mp4', 'CC T2 EP 12.mp4', '4AV.MP4', '50BB', '12FIT.mp4', '62BINT', 'MC1', '27FIT.mp4', '23BB', 'CC T1 EP 13.mp4', '5AV.MP4', 'CC T2 EP 13.mp4', '24BB', '13FIT.mp4', '43FIT.mp4', '28FIT.mp4', '63BINT', 'MC2', '16BINT', 'CC T1 EP 14.mp4', '6AV.MP4', 'CC T2 EP 14.mp4', '28BB', '64BINT', '44FIT.mp4', '1OFEC', 'MC3', '17BINT', 'CC T1 EP 15 .mp4', '7AV.MP4', 'CC T2 EP 15.mp4', '30BB', '65BINT', '30FIT.mp4', '21BINT', 'CC T1 EP 16 .mp4', '8AV.MP4', 'CC T2 EP 15.mp4', '31BB', '16FIT.mp4', '51BINT', '1FIT.mp4', '22BINT', 'CC T1 EP 1.mp4', '1AV.MP4', 'CC T2 EP 1.mp4', '31FIT.mp4', '34BB', '17FIT.mp4', '52BINT', '2FIT.mp4', '32FIT.mp4', 'CC T1 EP 2.mp4', '2AV.MP4', 'CC T2 EP 2.mp4', '18FIT.mp4', '37BB', '3FIT.mp4', '53BINT', '33FIT.mp4', '24BINT', 'CC T1 EP 3.mp4', '3AV.MP4', 'CC T2 EP 3.mp4', '2BB', '4FIT.mp4', '54BINT', '34FIT.mp4', '19FIT.mp4', '45FIT.mp4', 'CC T1 EP 4.mp4', '4AV.MP4', 'CC T2 EP 4.mp4', '5FIT.mp4', '39BB', '35FIT.mp4', '55BINT', '20FIT.mp4', '14FIT.mp4', '44FIT.mp4', 'MC3', 'CC T1 EP 5.mp4', '5AV.MP4', 'CC T2 EP 5.mp4', '21FIT.mp4', '50BB', '1OFEC', 'MC1', '6FIT.mp4', '56BINT', '24BINT', '36FIT.mp4', '2OFEC', 'CC T1 EP 6.mp4', '6AV.MP4', 'CC T2 EP 6.mp4', '22FIT.mp4', '40BB', 'MC2', '2BINT', '7FIT.mp4', '37FIT.mp4', '30FIT.mp4', '29FIT.mp4', 'CC T1 EP 7.mp4', '7AV.MP4', 'CC T2 EP 7.mp4', '23FIT.mp4', 'MC3', '3BINT', '8FIT.mp4', '58BINT', '38FIT.mp4', 'CC T1 EP 8.mp4', '8AV.MP4', 'CC T2 EP 8.mp4', '24FIT.mp4', '4BB', '9FIT.mp4', '4BINT', '59BINT', 'CC T1 EP 9.mp4', '1AV.MP4', 'CC T2 EP 9.mp4', '60BINT', '39FIT.mp4', '10FIT.mp4', '40FIT.mp4', '5BINT', 'CC T1 EP 10.mp4', '2AV.MP4', 'CC T2 EP 10.mp4', '25FIT.mp4', '8BB', '26FIT.mp4', '8BINT', '11FIT.mp4', '61BINT', '41FIT.mp4', 'CC T1 EP 11.mp4', '3AV.MP4', 'CC T2 EP 11.mp4', '27FIT.mp4', '9BB', '9BINT', '62BINT', '42FIT.mp4', 'CC T1 EP 12.mp4', '4AV.MP4', 'CC T2 EP 12.mp4', '28FIT.mp4', '12BB', 'MC2', '43FIT.mp4', 'MC1', '13FIT.mp4', '63BINT', '12FIT.mp4', '1OFEC', '2OFEC', 'CC T1 EP 13.mp4', '6AV.MP4', 'CC T1 EP 14.mp4', 'CC T2 EP 13.mp4', '13BB', '5AV.MP4', 'CC T1 EP 15 .mp4', '7AV.MP4', 'CC T1 EP 16 .mp4', 'CC T2 EP 14.mp4', '16BB', '8AV.MP4']
     
