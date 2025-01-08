@@ -112,7 +112,7 @@ def generate_concat_file(video_queue):
                 video_path = os.path.join(VIDEOS_DIR, video)
                 logging.debug(str(video_path))
                 if os.path.exists(video_path):  # Verifica que el archivo existe
-                    f.write(f"file '{video_path}'\n")  # Formato compatible con FFmpeg
+                    f.write(f"file '{video}'\n")  # Formato compatible con FFmpeg
 
         return concat_file
     except Exception as e:
@@ -148,7 +148,7 @@ def stream_videos():
         print("Iniciando transmisión con concatenación de videos...")
         try:
             process = subprocess.Popen(pipeline)
-            process.wait()
+            process.wait()  # Espera a que FFmpeg termine antes de reiniciar la lista
         except Exception as e:
             print(f"Error en FFmpeg: {e}")
         finally:
