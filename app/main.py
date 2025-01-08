@@ -20,8 +20,8 @@ VIDEOS_DIR = "./videos"
 HLS_OUTPUT_DIR = "./hls_output"
 
 # Configuración HLS
-SEGMENT_DURATION = 4  # Duración de cada segmento HLS (en segundos)
-PLAYLIST_LENGTH = 10   # Número de segmentos en la lista de reproducción
+SEGMENT_DURATION = 10  # Duración de cada segmento HLS (en segundos)
+PLAYLIST_LENGTH = 5   # Número de segmentos en la lista de reproducción
 
 # Cola de reproducción
 video_queue = []
@@ -107,35 +107,38 @@ def stream_videos():
     original_sequence = video_queue[:]  # Guardamos la secuencia original
 
     while True:
-        if not video_queue:  # Reiniciar la cola si se vacía
+        if not video_queue:  # Si la lista está vacía, reiniciamos la cola
             video_queue = original_sequence[:]
-            
-        if video_queue:
-            current_video = video_queue.pop(0)
-            video_path = os.path.join(VIDEOS_DIR, current_video)
-            
-            if os.path.exists(video_path):
-                # Configuración del pipeline FFmpeg
-                pipeline = [
-                    "ffmpeg", "-re", "-i", video_path,
-                    "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
-                    "-maxrate", "2000k", "-bufsize", "4000k",
-                    "-g", "48",  # GOP size para mejorar la latencia
-                    "-sc_threshold", "0",  # Desactiva el threshold de corte de escenas
-                    "-c:a", "aac", "-b:a", "128k",
-                    "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
-                    "-hls_list_size", str(PLAYLIST_LENGTH),
-                    "-hls_flags", "independent_segments+delete_segments",
-                    "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
-                    os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
-                ]
 
-                # Ejecutar FFmpeg
-                subprocess.Popen(pipeline)
-            else:
-                print(f"Video {current_video} no encontrado.")
+        current_video = video_queue.pop(0)  # Sacar el primer video
+        video_path = os.path.join(VIDEOS_DIR, current_video)
+
+        if os.path.exists(video_path):
+            print(f"Iniciando transmisión de: {current_video}")
+
+            pipeline = [
+                "ffmpeg", "-re", "-stream_loop", "-1", "-i", video_path,  # <- Asegura que FFmpeg no se cierre
+                "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
+                "-maxrate", "2000k", "-bufsize", "4000k",
+                "-g", "48",
+                "-sc_threshold", "0",
+                "-c:a", "aac", "-b:a", "128k",
+                "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
+                "-hls_list_size", str(PLAYLIST_LENGTH),
+                "-hls_flags", "independent_segments+delete_segments",
+                "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
+                os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
+            ]
+
+            process = subprocess.Popen(pipeline)
+            process.wait()  # Esperar que termine el video antes de pasar al siguiente
+
+            print(f"Finalizó {current_video}. Pasando al siguiente video...")
+
         else:
-            time.sleep(1) 
+            print(f"Video {current_video} no encontrado. Saltando...")
+
+        time.sleep(1)  # Pequeña pausa para evitar loops rápidos
 
 @app.route("/api/view_epg")
 def view_epg():
