@@ -102,44 +102,83 @@ def get_vast_ad_url():
         print(f"Error obteniendo el VAST tag: {e}")
         return None
 
+def generate_concat_file(video_queue):
+    """ Crea un archivo temporal con la lista de videos a concatenar """
+    concat_file = os.path.join(VIDEOS_DIR, "concat_list.txt")
+    with open(concat_file, "w") as f:
+        for video in video_queue:
+            video_path = os.path.join(VIDEOS_DIR, video)
+            if os.path.exists(video_path):
+                f.write(f"file '{video_path}'\n")  # FFmpeg necesita este formato
+
+    return concat_file
+
 def stream_videos():
-    global video_queue
-    original_sequence = video_queue[:]  # Guardamos la secuencia original
-
     while True:
-        if not video_queue:  # Si la lista está vacía, reiniciamos la cola
-            video_queue = original_sequence[:]
+        if not video_queue:
+            print("Lista de videos vacía. Reiniciando...")
+            video_queue.extend(["video1.mp4", "video2.mp4", "video3.mp4"])  # Reinicia la lista
 
-        current_video = video_queue.pop(0)  # Sacar el primer video
-        video_path = os.path.join(VIDEOS_DIR, current_video)
+        # Genera un archivo con la lista de videos concatenados
+        concat_file = generate_concat_file(video_queue)
 
-        if os.path.exists(video_path):
-            print(f"Iniciando transmisión de: {current_video}")
+        pipeline = [
+            "ffmpeg", "-re", "-f", "concat", "-safe", "0", "-i", concat_file,  # Concatenación sin interrupciones
+            "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
+            "-maxrate", "2000k", "-bufsize", "4000k",
+            "-g", "48", "-sc_threshold", "0",
+            "-c:a", "aac", "-b:a", "128k",
+            "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
+            "-hls_list_size", str(PLAYLIST_LENGTH),
+            "-hls_flags", "independent_segments+delete_segments",
+            "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
+            os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
+        ]
 
-            pipeline = [
-                "ffmpeg", "-re", "-i", video_path,  # <- Eliminamos `-stream_loop -1`
-                "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
-                "-maxrate", "2000k", "-bufsize", "4000k",
-                "-g", "48",
-                "-sc_threshold", "0",
-                "-c:a", "aac", "-b:a", "128k",
-                "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
-                "-hls_list_size", str(PLAYLIST_LENGTH),
-                "-hls_flags", "independent_segments+delete_segments",
-                "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
-                os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
-            ]
+        print("Iniciando transmisión con concatenación de videos...")
+        process = subprocess.Popen(pipeline)
+        process.wait()  # Esperar a que termine antes de reiniciar la lista
 
-            process = subprocess.Popen(pipeline)
-            process.wait()  # Esperar que termine el video antes de pasar al siguiente
+        print("Transmisión finalizada, reiniciando...")
+        
+# def stream_videos():
+#     global video_queue
+#     original_sequence = video_queue[:]  # Guardamos la secuencia original
 
-            print(f"Finalizó {current_video}. Pasando al siguiente video...")
+#     while True:
+#         if not video_queue:  # Si la lista está vacía, reiniciamos la cola
+#             video_queue = original_sequence[:]
 
-        else:
-            print(f"Video {current_video} no encontrado. Saltando...")
+#         current_video = video_queue.pop(0)  # Sacar el primer video
+#         video_path = os.path.join(VIDEOS_DIR, current_video)
 
-        time.sleep(1)  # Pequeña pausa para evitar loops rápidos
-        continue # Pequeña pausa para evitar loops rápidos
+#         if os.path.exists(video_path):
+#             print(f"Iniciando transmisión de: {current_video}")
+
+#             pipeline = [
+#                 "ffmpeg", "-re", "-i", video_path,  # <- Eliminamos `-stream_loop -1`
+#                 "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
+#                 "-maxrate", "2000k", "-bufsize", "4000k",
+#                 "-g", "48",
+#                 "-sc_threshold", "0",
+#                 "-c:a", "aac", "-b:a", "128k",
+#                 "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
+#                 "-hls_list_size", str(PLAYLIST_LENGTH),
+#                 "-hls_flags", "independent_segments+delete_segments",
+#                 "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
+#                 os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
+#             ]
+
+#             process = subprocess.Popen(pipeline)
+#             process.wait()  # Esperar que termine el video antes de pasar al siguiente
+
+#             print(f"Finalizó {current_video}. Pasando al siguiente video...")
+
+#         else:
+#             print(f"Video {current_video} no encontrado. Saltando...")
+
+#         time.sleep(1)  # Pequeña pausa para evitar loops rápidos
+#         continue # Pequeña pausa para evitar loops rápidos
 
 @app.route("/api/view_epg")
 def view_epg():
