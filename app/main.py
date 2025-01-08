@@ -222,7 +222,7 @@ def convert_video(input_path, output_path):
 def start_stream():
     """Inicia la transmisión siguiendo la secuencia predefinida."""
     global video_queue
-    threading.Thread(target=download_video, daemon=True).start()
+    # threading.Thread(target=download_video, daemon=True).start()
     
     especial = 'inserted_video_fixed.mp4'
     
@@ -245,7 +245,7 @@ def start_stream():
                 searchSegment = f'{elemento}_{x}.mp4'
                 if searchSegment in segmentos:
                     video_queue.append(searchSegment)
-                    video_queue.append(especial)
+                    # video_queue.append(especial)
     
     # video_queue = [video for video in secuencia if video in videos_disponibles]
     threading.Thread(target=stream_videos, daemon=True).start()
