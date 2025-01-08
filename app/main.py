@@ -7,6 +7,7 @@ import json
 import requests
 import xml.etree.ElementTree as ET
 import re
+import shutil
 from flask import Flask, Response, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
 
@@ -112,30 +113,27 @@ def stream_videos():
         if video_queue:
             current_video = video_queue.pop(0)
             video_path = os.path.join(VIDEOS_DIR, current_video)
+            
+            if os.path.exists(video_path):
+                # Configuración del pipeline FFmpeg
+                pipeline = [
+                    "ffmpeg", "-re", "-i", video_path,
+                    "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
+                    "-maxrate", "2000k", "-bufsize", "4000k",
+                    "-g", "48",  # GOP size para mejorar la latencia
+                    "-sc_threshold", "0",  # Desactiva el threshold de corte de escenas
+                    "-c:a", "aac", "-b:a", "128k",
+                    "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
+                    "-hls_list_size", str(PLAYLIST_LENGTH),
+                    "-hls_flags", "independent_segments+delete_segments",
+                    "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
+                    os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
+                ]
 
-            try:
-                if os.path.exists(video_path):
-                    # Configuración del pipeline FFmpeg
-                    pipeline = [
-                        "ffmpeg", "-re", "-i", video_path,
-                        "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
-                        "-maxrate", "2000k", "-bufsize", "4000k",
-                        "-g", "48",  # GOP size para mejorar la latencia
-                        "-sc_threshold", "0",  # Desactiva el threshold de corte de escenas
-                        "-c:a", "aac", "-b:a", "128k",
-                        "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
-                        "-hls_list_size", str(PLAYLIST_LENGTH),
-                        "-hls_flags", "independent_segments+delete_segments",
-                        "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
-                        os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
-                    ]
-
-                    # Ejecutar FFmpeg
-                    subprocess.Popen(pipeline)
-                else:
-                    print(f"Video {current_video} no encontrado.")
-            except:
-                print(f"Error al ejecutar FFmpeg para el video {current_video}.")
+                # Ejecutar FFmpeg
+                subprocess.Popen(pipeline)
+            else:
+                print(f"Video {current_video} no encontrado.")
         else:
             time.sleep(1) 
 
@@ -210,6 +208,23 @@ def start_stream():
 
     return jsonify({"message": "Streaming started following the predefined sequence.", "videos": video_queue})
 
+@app.route("/api/clear", methods=["GET"])
+def cleanHlsDir():
+    # Limpiar la carpeta HLS_OUTPUT_DIR
+    if os.path.exists(HLS_OUTPUT_DIR):
+        for filename in os.listdir(HLS_OUTPUT_DIR):
+            file_path = os.path.join(HLS_OUTPUT_DIR, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)  # Elimina archivos y enlaces simbólicos
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)  # Elimina carpetas completas
+            except Exception as e:
+                return jsonify({"error": f"Error cleaning HLS output directory: {e}"}), 500
+    else:
+        return jsonify({"message": f"Not exits dir {HLS_OUTPUT_DIR}"}),400
+    
+    return jsonify({"message": f"clear output directory {HLS_OUTPUT_DIR}"})
 
 @app.route("/api/videos", methods=["GET"])
 def list_videos():
