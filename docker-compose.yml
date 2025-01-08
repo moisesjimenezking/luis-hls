@@ -6,6 +6,7 @@ services:
     build:
       context: .
     network_mode: "host"
+    user: "root"
     volumes:
       - ./videos:/app/videos:rw 
       - ./app/hls:/app/hls_output  # Carpeta de salida HLS
