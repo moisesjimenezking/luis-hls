@@ -158,45 +158,6 @@ def stream_videos():
         print("Transmisión finalizada, reiniciando en 5 segundos...")
         time.sleep(5)
         
-# def stream_videos():
-#     global video_queue
-#     original_sequence = video_queue[:]  # Guardamos la secuencia original
-
-#     while True:
-#         if not video_queue:  # Si la lista está vacía, reiniciamos la cola
-#             video_queue = original_sequence[:]
-
-#         current_video = video_queue.pop(0)  # Sacar el primer video
-#         video_path = os.path.join(VIDEOS_DIR, current_video)
-
-#         if os.path.exists(video_path):
-#             print(f"Iniciando transmisión de: {current_video}")
-
-#             pipeline = [
-#                 "ffmpeg", "-re", "-i", video_path,  # <- Eliminamos `-stream_loop -1`
-#                 "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
-#                 "-maxrate", "2000k", "-bufsize", "4000k",
-#                 "-g", "48",
-#                 "-sc_threshold", "0",
-#                 "-c:a", "aac", "-b:a", "128k",
-#                 "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
-#                 "-hls_list_size", str(PLAYLIST_LENGTH),
-#                 "-hls_flags", "independent_segments+delete_segments",
-#                 "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
-#                 os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
-#             ]
-
-#             process = subprocess.Popen(pipeline)
-#             process.wait()  # Esperar que termine el video antes de pasar al siguiente
-
-#             print(f"Finalizó {current_video}. Pasando al siguiente video...")
-
-#         else:
-#             print(f"Video {current_video} no encontrado. Saltando...")
-
-#         time.sleep(1)  # Pequeña pausa para evitar loops rápidos
-#         continue # Pequeña pausa para evitar loops rápidos
-
 @app.route("/api/view_epg")
 def view_epg():
     file_xlm = os.path.join(PUBLIC_DIR, "epg.xml")
@@ -212,28 +173,50 @@ def download_epg():
     return send_file(file_xlm, as_attachment=True)
 
 def download_video():
-    # global INSERTED_VIDEO_PATH
-    """Descarga un video desde una URL y lo guarda en output_path."""
+    """Descarga y convierte el video para que sea compatible con la transmisión."""
     while True:
         try:
             url = get_vast_ad_url()
             if url is None:
                 return False
-            
+
+            # Descargar el video crudo
             response = requests.get(url, stream=True)
             response.raise_for_status()
-            with open(INSERTED_VIDEO_PATH, "wb") as f:
+            with open("inserted_video_raw.mp4", "wb") as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
-                    
-                # Cambiar permisos después de la descarga
-            os.chmod(INSERTED_VIDEO_PATH, 0o777)  # Permisos total para lectura/escritura
-            logging.debug(f"Video descargado y permisos actualizados: {INSERTED_VIDEO_PATH}")
+
+            logging.debug("Video descargado: inserted_video_raw.mp4")
+
+            # Convertirlo a un formato compatible
+            convert_video("inserted_video_raw.mp4", "inserted_video_fixed.mp4")
+
+            os.chmod("inserted_video_fixed.mp4", 0o777)
+            logging.debug("Video convertido y guardado en: inserted_video_fixed.mp4")
+
             time.sleep(450)
         except Exception as e:
             logging.debug(f"Error al descargar el video: {e}")
             time.sleep(20)
-    
+
+def convert_video(input_path, output_path):
+    """Convierte el video descargado para que sea compatible con la transmisión."""
+    try:
+        ffmpeg_command = [
+            "ffmpeg", "-y", "-i", input_path,
+            "-c:v", "libx264", "-profile:v", "high", "-preset", "fast",
+            "-b:v", "2000k", "-maxrate", "2000k", "-bufsize", "4000k",
+            "-r", "29.97", "-g", "48", "-sc_threshold", "0",
+            "-c:a", "aac", "-b:a", "128k", "-ar", "44100", "-ac", "2",
+            "-movflags", "+faststart",
+            "-f", "mp4", output_path
+        ]
+        subprocess.run(ffmpeg_command, check=True)
+        logging.debug(f"Conversión exitosa: {output_path}")
+    except Exception as e:
+        logging.debug(f"Error en la conversión con FFmpeg: {e}")
+        
 @app.route("/api/start", methods=["GET"])
 def start_stream():
     """Inicia la transmisión siguiendo la secuencia predefinida."""
