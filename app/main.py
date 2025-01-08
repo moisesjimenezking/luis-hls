@@ -117,7 +117,7 @@ def stream_videos():
             print(f"Iniciando transmisión de: {current_video}")
 
             pipeline = [
-                "ffmpeg", "-re", "-stream_loop", "-1", "-i", video_path,  # <- Asegura que FFmpeg no se cierre
+                "ffmpeg", "-re", "-i", video_path,  # <- Eliminamos `-stream_loop -1`
                 "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
                 "-maxrate", "2000k", "-bufsize", "4000k",
                 "-g", "48",
@@ -139,6 +139,7 @@ def stream_videos():
             print(f"Video {current_video} no encontrado. Saltando...")
 
         time.sleep(1)  # Pequeña pausa para evitar loops rápidos
+        continue # Pequeña pausa para evitar loops rápidos
 
 @app.route("/api/view_epg")
 def view_epg():
