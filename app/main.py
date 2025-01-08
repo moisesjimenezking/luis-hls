@@ -212,7 +212,7 @@ def download_epg():
     return send_file(file_xlm, as_attachment=True)
 
 def download_video():
-    global INSERTED_VIDEO_PATH
+    # global INSERTED_VIDEO_PATH
     """Descarga un video desde una URL y lo guarda en output_path."""
     while True:
         try:
@@ -225,7 +225,10 @@ def download_video():
             with open(INSERTED_VIDEO_PATH, "wb") as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
-            logging.debug(f"Video descargado exitosamente: {INSERTED_VIDEO_PATH}")
+                    
+                # Cambiar permisos después de la descarga
+            os.chmod(INSERTED_VIDEO_PATH, 0o777)  # Permisos total para lectura/escritura
+            logging.debug(f"Video descargado y permisos actualizados: {INSERTED_VIDEO_PATH}")
             time.sleep(450)
         except Exception as e:
             logging.debug(f"Error al descargar el video: {e}")
