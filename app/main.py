@@ -114,10 +114,12 @@ def generate_concat_file(video_queue):
     return concat_file
 
 def stream_videos():
+    global video_queue
+    original_sequence = video_queue[:]  # Guardamos la secuencia original
+
     while True:
         if not video_queue:
-            print("Lista de videos vacía. Reiniciando...")
-            video_queue.extend(["video1.mp4", "video2.mp4", "video3.mp4"])  # Reinicia la lista
+            video_queue = original_sequence[:]
 
         # Genera un archivo con la lista de videos concatenados
         concat_file = generate_concat_file(video_queue)
