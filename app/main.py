@@ -130,8 +130,7 @@ def stream_videos():
                 ]
 
                 # Ejecutar FFmpeg
-                process = subprocess.Popen(pipeline)
-                process.wait()  # Esperar a que FFmpeg termine antes de pasar al siguiente video
+                subprocess.Popen(pipeline)
             else:
                 print(f"Video {current_video} no encontrado.")
         else:
