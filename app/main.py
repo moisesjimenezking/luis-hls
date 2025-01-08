@@ -105,24 +105,33 @@ def get_vast_ad_url():
 def generate_concat_file(video_queue):
     """ Crea un archivo temporal con la lista de videos a concatenar """
     concat_file = os.path.join(VIDEOS_DIR, "concat_list.txt")
-    with open(concat_file, "w") as f:
-        for video in video_queue:
-            video_path = os.path.join(VIDEOS_DIR, video)
-            if os.path.exists(video_path):
-                f.write(f"file '{video_path}'\n")  # FFmpeg necesita este formato
+    
+    try:
+        with open(concat_file, "w") as f:
+            for video in video_queue:
+                video_path = os.path.join(VIDEOS_DIR, video)
+                logging.debug(str(video_path))
+                if os.path.exists(video_path):  # Verifica que el archivo existe
+                    f.write(f"file '{video_path}'\n")  # Formato compatible con FFmpeg
 
-    return concat_file
+        return concat_file
+    except Exception as e:
+        print(f"Error al generar concat_list.txt: {e}")
+        return None
 
 def stream_videos():
-    global video_queue
-    original_sequence = video_queue[:]  # Guardamos la secuencia original
-
+    # global video_queue
+    # original_sequence = video_queue[:]  # Guardamos la secuencia original        
     while True:
-        if not video_queue:
-            video_queue = original_sequence[:]
+        concat_file = generate_concat_file(video_queue)
+        if not concat_file:
+            print("No se pudo generar el archivo de concatenación. Esperando 10 segundos...")
+            time.sleep(10)
+        # if not video_queue:
+        #     video_queue = original_sequence[:]
 
         # Genera un archivo con la lista de videos concatenados
-        concat_file = generate_concat_file(video_queue)
+        
 
         pipeline = [
             "ffmpeg", "-re", "-f", "concat", "-safe", "0", "-i", concat_file,  # Concatenación sin interrupciones
@@ -136,12 +145,18 @@ def stream_videos():
             "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
             os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
         ]
-
         print("Iniciando transmisión con concatenación de videos...")
-        process = subprocess.Popen(pipeline)
-        process.wait()  # Esperar a que termine antes de reiniciar la lista
+        try:
+            process = subprocess.Popen(pipeline)
+            process.wait()
+        except Exception as e:
+            print(f"Error en FFmpeg: {e}")
+        finally:
+            if process.poll() is None:
+                process.terminate()  # Asegura que el proceso de FFmpeg se cierre correctamente
 
-        print("Transmisión finalizada, reiniciando...")
+        print("Transmisión finalizada, reiniciando en 5 segundos...")
+        time.sleep(5)
         
 # def stream_videos():
 #     global video_queue
