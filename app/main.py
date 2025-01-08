@@ -135,11 +135,12 @@ def stream_videos():
         
 
         pipeline = [
-            "ffmpeg", "-re", "-f", "concat", "-safe", "0", "-i", concat_file,  # Concatenación sin interrupciones
+            "ffmpeg", "-re", "-f", "concat", "-safe", "0", "-i", concat_file,
             "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
             "-maxrate", "2000k", "-bufsize", "4000k",
             "-g", "48", "-sc_threshold", "0",
-            "-c:a", "aac", "-b:a", "128k",
+            "-c:a", "aac", "-b:a", "128k", "-ar", "44100", "-ac", "2",  # Asegurar audio
+            "-err_detect", "ignore_err", "-ignore_unknown",  # Omitir errores de archivos corruptos
             "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
             "-hls_list_size", str(PLAYLIST_LENGTH),
             "-hls_flags", "independent_segments+delete_segments",
