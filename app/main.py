@@ -113,26 +113,29 @@ def stream_videos():
             current_video = video_queue.pop(0)
             video_path = os.path.join(VIDEOS_DIR, current_video)
 
-            if os.path.exists(video_path):
-                # Configuración del pipeline FFmpeg
-                pipeline = [
-                    "ffmpeg", "-re", "-i", video_path,
-                    "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
-                    "-maxrate", "2000k", "-bufsize", "4000k",
-                    "-g", "48",  # GOP size para mejorar la latencia
-                    "-sc_threshold", "0",  # Desactiva el threshold de corte de escenas
-                    "-c:a", "aac", "-b:a", "128k",
-                    "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
-                    "-hls_list_size", str(PLAYLIST_LENGTH),
-                    "-hls_flags", "independent_segments+delete_segments",
-                    "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
-                    os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
-                ]
+            try:
+                if os.path.exists(video_path):
+                    # Configuración del pipeline FFmpeg
+                    pipeline = [
+                        "ffmpeg", "-re", "-i", video_path,
+                        "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
+                        "-maxrate", "2000k", "-bufsize", "4000k",
+                        "-g", "48",  # GOP size para mejorar la latencia
+                        "-sc_threshold", "0",  # Desactiva el threshold de corte de escenas
+                        "-c:a", "aac", "-b:a", "128k",
+                        "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
+                        "-hls_list_size", str(PLAYLIST_LENGTH),
+                        "-hls_flags", "independent_segments+delete_segments",
+                        "-hls_segment_filename", os.path.join(HLS_OUTPUT_DIR, "segment_%03d.ts"),
+                        os.path.join(HLS_OUTPUT_DIR, "cuaima-tv.m3u8")
+                    ]
 
-                # Ejecutar FFmpeg
-                subprocess.Popen(pipeline)
-            else:
-                print(f"Video {current_video} no encontrado.")
+                    # Ejecutar FFmpeg
+                    subprocess.Popen(pipeline)
+                else:
+                    print(f"Video {current_video} no encontrado.")
+            except:
+                print(f"Error al ejecutar FFmpeg para el video {current_video}.")
         else:
             time.sleep(1) 
 
