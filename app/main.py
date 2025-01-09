@@ -50,7 +50,7 @@ def normalize_videos():
                 logging.info(f"Normalizando video: {filename}")
                 success = preprocess_video(video, normalized_path)
                 if success:
-                    video_queue.append(normalized_path)
+                    video_queue.append(filename)
                     logging.info(f"✅ Video normalizado: {filename}")
                 else:
                     logging.warning(f"⚠️ Error al normalizar {filename}")
