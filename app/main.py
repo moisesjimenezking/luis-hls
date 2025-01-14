@@ -26,7 +26,7 @@ video_queue = []  # Cola de videos normalizados
 def preprocess_video(input_path, output_path):
     """Convierte un video a formato compatible para HLS."""
     pipeline = [
-        "ffmpeg", "-y", "-fflags", "+genpts", "-i", input_path,  # <--- Añadido aquí
+        "ffmpeg", "-y", "-i", input_path,  # <--- Añadido aquí
         "-c:v", "libx264", "-preset", "fast", "-tune", "zerolatency",
         "-b:v", "2000k", "-maxrate", "2000k", "-bufsize", "4000k",
         "-g", "48", "-sc_threshold", "0",
@@ -70,8 +70,13 @@ def generate_concat_file():
     
     return concat_path
 
+import os
+import subprocess
+import logging
+import time
+
 def stream_videos():
-    """Ciclo de transmisión de videos normalizados."""
+    """Ciclo de transmisión de videos normalizados, descartando videos problemáticos."""
     while True:
         if not video_queue:
             logging.info("⚠️ No hay videos listos para transmitir. Esperando...")
@@ -85,7 +90,7 @@ def stream_videos():
             continue
 
         pipeline = [
-            "ffmpeg", "-re", "-fflags", "+genpts",  # <--- Añadido aquí
+            "ffmpeg", "-re",  # ❌ Se quitó `-fflags +genpts`
             "-f", "concat", "-safe", "0", "-i", concat_file,
             "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency",
             "-b:v", "2000k", "-maxrate", "2000k", "-bufsize", "4000k",
@@ -101,8 +106,25 @@ def stream_videos():
 
         logging.info("🎥 Iniciando transmisión con videos normalizados...")
         try:
-            process = subprocess.Popen(pipeline)
-            process.wait()
+            process = subprocess.Popen(pipeline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = process.communicate()
+
+            # 🔍 Buscar un error de DTS en la salida de FFmpeg
+            if b"DTS out of order" in stderr or process.returncode != 0:
+                logging.error("⚠️ Error de DTS detectado. Eliminando video problemático...")
+
+                # 🔎 Detectar qué archivo tiene el error
+                with open(concat_file, "r") as f:
+                    videos = [line.strip().split("'")[1] for line in f if line.startswith("file")]
+
+                if videos:
+                    bad_video = videos[0]  # Tomamos el primer video en la lista
+                    logging.warning(f"🗑 Eliminando {bad_video} y reintentando transmisión...")
+                    os.remove(bad_video)
+                    video_queue.remove(bad_video)  # Eliminarlo de la cola
+
+                continue  # Reiniciar la transmisión con los videos restantes
+
         except Exception as e:
             logging.error(f"⚠️ Error en FFmpeg: {e}")
         finally:
@@ -111,6 +133,7 @@ def stream_videos():
 
         logging.info("🔄 Transmisión finalizada, reiniciando en 5 segundos...")
         time.sleep(5)
+
 
 @app.route("/api/start", methods=["GET"])
 def start_stream():
