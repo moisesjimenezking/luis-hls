@@ -26,7 +26,7 @@ video_queue = []  # Cola de videos normalizados
 def preprocess_video(input_path, output_path):
     """Convierte un video a formato compatible para HLS."""
     pipeline = [
-        "ffmpeg", "-y", "-i", input_path,
+        "ffmpeg", "-y", "-fflags", "+genpts", "-i", input_path,  # <--- Añadido aquí
         "-c:v", "libx264", "-preset", "fast", "-tune", "zerolatency",
         "-b:v", "2000k", "-maxrate", "2000k", "-bufsize", "4000k",
         "-g", "48", "-sc_threshold", "0",
@@ -35,7 +35,7 @@ def preprocess_video(input_path, output_path):
         output_path
     ]
     result = subprocess.run(pipeline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    return result.returncode == 0  # Retorna True si la conversión fue exitosa
+    return result.returncode == 0 # Retorna True si la conversión fue exitosa
 
 def normalize_videos():
     """Hilo en segundo plano para normalizar videos automáticamente."""
@@ -85,9 +85,10 @@ def stream_videos():
             continue
 
         pipeline = [
-            "ffmpeg", "-re", "-f", "concat", "-safe", "0", "-i", concat_file,
-            "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
-            "-maxrate", "2000k", "-bufsize", "4000k",
+            "ffmpeg", "-re", "-fflags", "+genpts",  # <--- Añadido aquí
+            "-f", "concat", "-safe", "0", "-i", concat_file,
+            "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency",
+            "-b:v", "2000k", "-maxrate", "2000k", "-bufsize", "4000k",
             "-g", "48", "-sc_threshold", "0",
             "-c:a", "aac", "-b:a", "128k", "-ar", "44100", "-ac", "2",
             "-err_detect", "ignore_err", "-ignore_unknown",
