@@ -3,7 +3,6 @@ import subprocess
 import threading
 import time
 import logging
-import re
 from flask import Flask, jsonify
 
 logging.basicConfig(level=logging.DEBUG)
@@ -16,8 +15,8 @@ HLS_OUTPUT_DIR = "./hls_output"
 NORMALIZE_DIR = "./videos/normalize"
 
 # Configuración HLS
-SEGMENT_DURATION = 10  # Duración de cada segmento HLS (en segundos)
-PLAYLIST_LENGTH = 5  # Número de segmentos en la lista de reproducción
+SEGMENT_DURATION = 5  # Duración de cada segmento HLS (en segundos)
+PLAYLIST_LENGTH = 20  # Número de segmentos en la lista de reproducción
 
 os.makedirs(NORMALIZE_DIR, exist_ok=True)
 os.makedirs(HLS_OUTPUT_DIR, exist_ok=True)
@@ -27,7 +26,7 @@ video_queue = []  # Cola de videos normalizados
 def preprocess_video(input_path, output_path):
     """Convierte un video a formato compatible para HLS."""
     pipeline = [
-        "ffmpeg", "-y", "-i", input_path,  # <--- Añadido aquí
+        "ffmpeg", "-y", "-i", input_path,
         "-c:v", "libx264", "-preset", "fast", "-tune", "zerolatency",
         "-b:v", "2000k", "-maxrate", "2000k", "-bufsize", "4000k",
         "-g", "48", "-sc_threshold", "0",
@@ -36,7 +35,7 @@ def preprocess_video(input_path, output_path):
         output_path
     ]
     result = subprocess.run(pipeline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    return result.returncode == 0 # Retorna True si la conversión fue exitosa
+    return result.returncode == 0  # Retorna True si la conversión fue exitosa
 
 def normalize_videos():
     """Hilo en segundo plano para normalizar videos automáticamente."""
@@ -72,7 +71,7 @@ def generate_concat_file():
     return concat_path
 
 def stream_videos():
-    """Ciclo de transmisión de videos normalizados, descartando solo el video que genere errores."""
+    """Ciclo de transmisión de videos normalizados ignorando errores."""
     while True:
         if not video_queue:
             logging.info("⚠️ No hay videos listos para transmitir. Esperando...")
@@ -86,13 +85,12 @@ def stream_videos():
             continue
 
         pipeline = [
-            "ffmpeg", "-re",
-            "-f", "concat", "-safe", "0", "-i", concat_file,
-            "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency",
-            "-b:v", "2000k", "-maxrate", "2000k", "-bufsize", "4000k",
+            "ffmpeg", "-re", "-f", "concat", "-safe", "0", "-i", concat_file,
+            "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency", "-b:v", "2000k",
+            "-maxrate", "2000k", "-bufsize", "4000k",
             "-g", "48", "-sc_threshold", "0",
             "-c:a", "aac", "-b:a", "128k", "-ar", "44100", "-ac", "2",
-            "-err_detect", "ignore_err", "-ignore_unknown",
+            "-err_detect", "ignore_err", "-ignore_unknown", "-xerror",
             "-f", "hls", "-hls_time", str(SEGMENT_DURATION),
             "-hls_list_size", str(PLAYLIST_LENGTH),
             "-hls_flags", "independent_segments+delete_segments",
@@ -102,36 +100,11 @@ def stream_videos():
 
         logging.info("🎥 Iniciando transmisión con videos normalizados...")
         try:
-            process = subprocess.Popen(pipeline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            stdout, stderr = process.communicate()
-
-            stderr_text = stderr.decode(errors="ignore")
-
-            # 🔍 Buscar errores específicos en el log
-            error_patterns = [
-                "DTS out of order",
-                "moov atom not found",
-                "Invalid data found when processing input",
-                "Could not find codec parameters",
-                "error while decoding",
-                "End of file"
-            ]
-
-            if any(error in stderr_text for error in error_patterns):
-                logging.error("⚠️ FFmpeg detectó un error en un video.")
-
-                # 🔎 Buscar cuál archivo falló basándonos en errores cercanos
-                failed_video_match = re.search(r"from '([^']+)'", stderr_text)
-                if failed_video_match:
-                    bad_video = failed_video_match.group(1)
-                    logging.warning(f"🗑 Eliminando {bad_video} y reintentando transmisión...")
-
-                    if bad_video in video_queue:
-                        os.remove(bad_video)  # 🔥 Eliminar archivo problemático
-                        video_queue.remove(bad_video)  # 🔄 Quitar de la lista de transmisión
-
-                continue  # Reiniciar la transmisión sin el video defectuoso
-
+            process = subprocess.Popen(pipeline, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            
+            while process.poll() is None:  # Mientras el proceso siga activo...
+                time.sleep(1)  # Evita consumo excesivo de CPU
+                
         except Exception as e:
             logging.error(f"⚠️ Error en FFmpeg: {e}")
         finally:
@@ -140,8 +113,6 @@ def stream_videos():
 
         logging.info("🔄 Transmisión finalizada, reiniciando en 5 segundos...")
         time.sleep(5)
-
-
 @app.route("/api/start", methods=["GET"])
 def start_stream():
     threading.Thread(target=normalize_videos, daemon=True).start()
