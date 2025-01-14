@@ -76,7 +76,7 @@ import logging
 import time
 
 def stream_videos():
-    """Ciclo de transmisión de videos normalizados, descartando videos problemáticos."""
+    """Ciclo de transmisión de videos normalizados, descartando solo el video que genere errores."""
     while True:
         if not video_queue:
             logging.info("⚠️ No hay videos listos para transmitir. Esperando...")
@@ -90,7 +90,7 @@ def stream_videos():
             continue
 
         pipeline = [
-            "ffmpeg", "-re",  # ❌ Se quitó `-fflags +genpts`
+            "ffmpeg", "-re",
             "-f", "concat", "-safe", "0", "-i", concat_file,
             "-c:v", "libx264", "-preset", "faster", "-tune", "zerolatency",
             "-b:v", "2000k", "-maxrate", "2000k", "-bufsize", "4000k",
@@ -109,21 +109,19 @@ def stream_videos():
             process = subprocess.Popen(pipeline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = process.communicate()
 
-            # 🔍 Buscar un error de DTS en la salida de FFmpeg
-            if b"DTS out of order" in stderr or process.returncode != 0:
-                logging.error("⚠️ Error de DTS detectado. Eliminando video problemático...")
+            # 🔍 Buscar el video que causó el error
+            error_match = re.search(r"Input #\d+, (mov|mp4).*from '([^']+)'", stderr.decode(errors="ignore"))
+            if error_match:
+                bad_video = error_match.group(2)
+                logging.error(f"⚠️ Error detectado en: {bad_video}")
 
-                # 🔎 Detectar qué archivo tiene el error
-                with open(concat_file, "r") as f:
-                    videos = [line.strip().split("'")[1] for line in f if line.startswith("file")]
-
-                if videos:
-                    bad_video = videos[0]  # Tomamos el primer video en la lista
+                # Verificar que el archivo realmente exista en la cola antes de eliminarlo
+                if bad_video in video_queue:
                     logging.warning(f"🗑 Eliminando {bad_video} y reintentando transmisión...")
-                    os.remove(bad_video)
-                    video_queue.remove(bad_video)  # Eliminarlo de la cola
+                    # os.remove(bad_video)
+                    video_queue.remove(bad_video)
 
-                continue  # Reiniciar la transmisión con los videos restantes
+                continue  # Reiniciar la transmisión sin el video defectuoso
 
         except Exception as e:
             logging.error(f"⚠️ Error en FFmpeg: {e}")
