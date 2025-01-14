@@ -3,6 +3,7 @@ import subprocess
 import threading
 import time
 import logging
+import re
 from flask import Flask, jsonify
 
 logging.basicConfig(level=logging.DEBUG)
@@ -70,11 +71,6 @@ def generate_concat_file():
     
     return concat_path
 
-import os
-import subprocess
-import logging
-import time
-
 def stream_videos():
     """Ciclo de transmisión de videos normalizados, descartando solo el video que genere errores."""
     while True:
@@ -109,17 +105,30 @@ def stream_videos():
             process = subprocess.Popen(pipeline, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = process.communicate()
 
-            # 🔍 Buscar el video que causó el error
-            error_match = re.search(r"Input #\d+, (mov|mp4).*from '([^']+)'", stderr.decode(errors="ignore"))
-            if error_match:
-                bad_video = error_match.group(2)
-                logging.error(f"⚠️ Error detectado en: {bad_video}")
+            stderr_text = stderr.decode(errors="ignore")
 
-                # Verificar que el archivo realmente exista en la cola antes de eliminarlo
-                if bad_video in video_queue:
+            # 🔍 Buscar errores específicos en el log
+            error_patterns = [
+                "DTS out of order",
+                "moov atom not found",
+                "Invalid data found when processing input",
+                "Could not find codec parameters",
+                "error while decoding",
+                "End of file"
+            ]
+
+            if any(error in stderr_text for error in error_patterns):
+                logging.error("⚠️ FFmpeg detectó un error en un video.")
+
+                # 🔎 Buscar cuál archivo falló basándonos en errores cercanos
+                failed_video_match = re.search(r"from '([^']+)'", stderr_text)
+                if failed_video_match:
+                    bad_video = failed_video_match.group(1)
                     logging.warning(f"🗑 Eliminando {bad_video} y reintentando transmisión...")
-                    # os.remove(bad_video)
-                    video_queue.remove(bad_video)
+
+                    if bad_video in video_queue:
+                        os.remove(bad_video)  # 🔥 Eliminar archivo problemático
+                        video_queue.remove(bad_video)  # 🔄 Quitar de la lista de transmisión
 
                 continue  # Reiniciar la transmisión sin el video defectuoso
 
