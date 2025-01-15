@@ -65,17 +65,16 @@ def normalize_videos():
 
 
 def create_gstreamer_pipeline():
-    """Genera la tubería de GStreamer para transmitir HLS."""
-
+    """Genera la tubería de GStreamer para transmitir múltiples videos en HLS."""
     if not video_queue:
         logging.warning("⚠️ No hay videos en la cola para transmitir.")
         return None
 
-    video_files = " ".join([os.path.join(NORMALIZE_DIR, f) for f in video_queue])
-    logging.info(f"🎥 Transmitiendo videos: {video_files}")
+    uris = " ".join([f"file://{os.path.abspath(os.path.join(NORMALIZE_DIR, f))}" for f in video_queue])
+    logging.info(f"🎥 Transmitiendo videos: {uris}")
 
     pipeline_str = f"""
-        filesrc location={video_files} ! decodebin name=decoder
+        uridecodebin uri={uris} name=decoder
         decoder. ! videoconvert ! x264enc bitrate=2000 ! mpegtsmux ! hlssink 
         playlist-location={HLS_OUTPUT_DIR}/playlist.m3u8 
         location={HLS_OUTPUT_DIR}/segment_%05d.ts 
@@ -83,6 +82,7 @@ def create_gstreamer_pipeline():
     """
 
     return Gst.parse_launch(pipeline_str)
+
 
 
 def stream_videos():
