@@ -2,12 +2,12 @@ import os
 import threading
 import time
 import logging
+import re
 from flask import Flask, jsonify
 import gi
-import re
 
 gi.require_version("Gst", "1.0")
-from gi.repository import Gst
+from gi.repository import Gst, GLib
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -30,11 +30,9 @@ video_queue = []  # Cola de videos normalizados
 # Inicializar GStreamer
 Gst.init(None)
 
-
 def is_valid_mp4(file_path):
     """Verifica si un archivo MP4 tiene códec H.264."""
-    return file_path.endswith(".mp4")  # Solo revisamos la extensión
-
+    return file_path.endswith(".mp4")
 
 def preprocess_video(input_path, output_path):
     """Verifica si el video es válido y lo copia sin recodificar."""
@@ -43,7 +41,6 @@ def preprocess_video(input_path, output_path):
         return True
     return False
 
-
 def normalize_videos():
     """Hilo en segundo plano para normalizar videos automáticamente."""
     while True:
@@ -51,7 +48,7 @@ def normalize_videos():
 
         for video in raw_videos:
             filename = os.path.basename(video)
-            filenameNormal = cadena_sin_espacios = re.sub(r'\s+', '', filename)
+            filenameNormal = re.sub(r'\s+', '', filename)
             normalized_path = os.path.join(NORMALIZE_DIR, filenameNormal)
 
             if not os.path.exists(normalized_path):
@@ -65,41 +62,49 @@ def normalize_videos():
 
         time.sleep(10)  # Verifica nuevos videos cada 10 segundos
 
-
 def create_gstreamer_pipeline():
     """Genera la tubería de GStreamer para transmitir múltiples videos en HLS con audio."""
     if not video_queue:
         logging.warning("⚠️ No hay videos en la cola para transmitir.")
         return None
 
-    pipeline_str = " concat name=concat_videos concat name=concat_audio "
-
+    pipeline_str = """
+        concat name=concat_videos concat name=concat_audio
+    """
+    
     for i, filename in enumerate(video_queue):
         uri = f"file://{os.path.abspath(os.path.join(NORMALIZE_DIR, filename))}"
         pipeline_str += f"""
             uridecodebin uri="{uri}" name=src{i} 
-            src{i}. ! queue ! videoconvert ! concat_videos.
+            src{i}. ! queue ! videoconvert ! videoscale ! videorate ! capsfilter caps=video/x-raw,framerate=30/1 ! concat_videos.
             src{i}. ! queue ! audioconvert ! audioresample ! avenc_aac bitrate=128000 ! concat_audio.
         """
 
     pipeline_str += f"""
         concat_videos. ! videoconvert ! x264enc bitrate=2000 ! queue ! mux.
         concat_audio. ! queue ! mux.
-        mpegtsmux name=mux ! hlssink 
-        playlist-location={HLS_OUTPUT_DIR}/cuaima-tv.m3u8 
-        location={HLS_OUTPUT_DIR}/segment_%05d.ts 
+        mpegtsmux name=mux ! hlssink \
+        playlist-location={HLS_OUTPUT_DIR}/cuaima-tv.m3u8 \
+        location={HLS_OUTPUT_DIR}/segment_%05d.ts \
         target-duration={SEGMENT_DURATION} max-files={PLAYLIST_LENGTH}
     """
 
     logging.info(f"🎥 Pipeline generado:\n{pipeline_str}")
     return Gst.parse_launch(pipeline_str)
 
-
-
-
+def bus_call(bus, message, loop):
+    """Maneja los mensajes del bus de GStreamer y reinicia la transmisión si hay un error."""
+    if message.type == Gst.MessageType.ERROR:
+        err, debug = message.parse_error()
+        logging.error(f"⚠️ Error en la transmisión: {err}, Debug: {debug}")
+        loop.quit()
+    elif message.type == Gst.MessageType.EOS:
+        logging.info("🎬 Fin de la transmisión. Reiniciando...")
+        loop.quit()
+    return True
 
 def stream_videos():
-    """Inicia el pipeline de GStreamer."""
+    """Inicia el pipeline de GStreamer y maneja errores."""
     while True:
         if not video_queue:
             logging.info("⚠️ No hay videos listos para transmitir. Esperando...")
@@ -111,20 +116,21 @@ def stream_videos():
             time.sleep(10)
             continue
 
-        logging.info("🎥 Iniciando transmisión con GStreamer...")
-        pipeline.set_state(Gst.State.PLAYING)
-
+        loop = GLib.MainLoop()
         bus = pipeline.get_bus()
-        msg = bus.timed_pop_filtered(Gst.CLOCK_TIME_NONE, Gst.MessageType.ERROR | Gst.MessageType.EOS)
+        bus.add_signal_watch()
+        bus.connect("message", bus_call, loop)
 
-        if msg:
-            logging.error(f"⚠️ Error en GStreamer: {msg}")
-
-        pipeline.set_state(Gst.State.NULL)
-
-        logging.info("🔄 Transmisión finalizada, reiniciando en 5 segundos...")
-        time.sleep(5)
-
+        pipeline.set_state(Gst.State.PLAYING)
+        try:
+            loop.run()
+        except KeyboardInterrupt:
+            logging.info("🛑 Transmisión detenida manualmente.")
+            break
+        finally:
+            pipeline.set_state(Gst.State.NULL)
+            logging.info("🔄 Reiniciando la transmisión en 5 segundos...")
+            time.sleep(2)
 
 @app.route("/api/start", methods=["GET"])
 def start_stream():
@@ -133,12 +139,10 @@ def start_stream():
     threading.Thread(target=stream_videos, daemon=True).start()
     return jsonify({"message": "Streaming iniciado."})
 
-
 @app.route("/api/videos", methods=["GET"])
 def list_videos():
     """Devuelve la lista de videos normalizados disponibles para la transmisión."""
     return jsonify({"normalized_videos": video_queue})
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
