@@ -72,18 +72,24 @@ def create_gstreamer_pipeline():
         logging.warning("⚠️ No hay videos en la cola para transmitir.")
         return None
 
-    uris = " ".join([f"file://{os.path.abspath(os.path.join(NORMALIZE_DIR, f))}" for f in video_queue])
-    logging.info(f"🎥 Transmitiendo videos: {uris}")
+    pipeline_str = " concat name=concat "
+    
+    for i, filename in enumerate(video_queue):
+        uri = f"file://{os.path.abspath(os.path.join(NORMALIZE_DIR, filename))}"
+        pipeline_str += f"""
+            uridecodebin uri="{uri}" name=src{i} ! queue ! videoconvert ! concat.
+        """
 
-    pipeline_str = f"""
-        uridecodebin uri={uris} name=decoder
-        decoder. ! videoconvert ! x264enc bitrate=2000 ! mpegtsmux ! hlssink 
+    pipeline_str += f"""
+        concat. ! videoconvert ! x264enc bitrate=2000 ! mpegtsmux ! hlssink 
         playlist-location={HLS_OUTPUT_DIR}/playlist.m3u8 
         location={HLS_OUTPUT_DIR}/segment_%05d.ts 
         target-duration={SEGMENT_DURATION} max-files={PLAYLIST_LENGTH}
     """
 
+    logging.info(f"🎥 Pipeline generado:\n{pipeline_str}")
     return Gst.parse_launch(pipeline_str)
+
 
 
 
