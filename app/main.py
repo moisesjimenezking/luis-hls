@@ -67,28 +67,33 @@ def normalize_videos():
 
 
 def create_gstreamer_pipeline():
-    """Genera la tubería de GStreamer para transmitir múltiples videos en HLS."""
+    """Genera la tubería de GStreamer para transmitir múltiples videos en HLS con audio."""
     if not video_queue:
         logging.warning("⚠️ No hay videos en la cola para transmitir.")
         return None
 
-    pipeline_str = " concat name=concat "
-    
+    pipeline_str = " concat name=concat_videos concat name=concat_audio "
+
     for i, filename in enumerate(video_queue):
         uri = f"file://{os.path.abspath(os.path.join(NORMALIZE_DIR, filename))}"
         pipeline_str += f"""
-            uridecodebin uri="{uri}" name=src{i} ! queue ! videoconvert ! concat.
+            uridecodebin uri="{uri}" name=src{i} 
+            src{i}. ! queue ! videoconvert ! concat_videos.
+            src{i}. ! queue ! audioconvert ! audioresample ! avenc_aac bitrate=128000 ! concat_audio.
         """
 
     pipeline_str += f"""
-        concat. ! videoconvert ! x264enc bitrate=2000 ! mpegtsmux ! hlssink 
-        playlist-location={HLS_OUTPUT_DIR}/playlist.m3u8 
+        concat_videos. ! videoconvert ! x264enc bitrate=2000 ! queue ! mux.
+        concat_audio. ! queue ! mux.
+        mpegtsmux name=mux ! hlssink 
+        playlist-location={HLS_OUTPUT_DIR}/cuaima-tv.m3u8 
         location={HLS_OUTPUT_DIR}/segment_%05d.ts 
         target-duration={SEGMENT_DURATION} max-files={PLAYLIST_LENGTH}
     """
 
     logging.info(f"🎥 Pipeline generado:\n{pipeline_str}")
     return Gst.parse_launch(pipeline_str)
+
 
 
 
