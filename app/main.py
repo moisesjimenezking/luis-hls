@@ -4,6 +4,7 @@ import time
 import logging
 from flask import Flask, jsonify
 import gi
+import re
 
 gi.require_version("Gst", "1.0")
 from gi.repository import Gst
@@ -50,16 +51,17 @@ def normalize_videos():
 
         for video in raw_videos:
             filename = os.path.basename(video)
-            normalized_path = os.path.join(NORMALIZE_DIR, filename)
+            filenameNormal = cadena_sin_espacios = re.sub(r'\s+', '', filename)
+            normalized_path = os.path.join(NORMALIZE_DIR, filenameNormal)
 
             if not os.path.exists(normalized_path):
-                logging.info(f"Normalizando video: {filename}")
+                logging.info(f"Normalizando video: {filenameNormal}")
                 success = preprocess_video(video, normalized_path)
                 if success:
-                    video_queue.append(filename)
-                    logging.info(f"✅ Video normalizado: {filename}")
+                    video_queue.append(filenameNormal)
+                    logging.info(f"✅ Video normalizado: {filenameNormal}")
                 else:
-                    logging.warning(f"⚠️ Error al normalizar {filename}")
+                    logging.warning(f"⚠️ Error al normalizar {filenameNormal}")
 
         time.sleep(10)  # Verifica nuevos videos cada 10 segundos
 
