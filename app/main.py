@@ -26,6 +26,7 @@ os.makedirs(NORMALIZE_DIR, exist_ok=True)
 os.makedirs(HLS_OUTPUT_DIR, exist_ok=True)
 
 video_queue = []  # Cola de videos normalizados
+current_video_index = 0  # Índice del video en reproducción
 
 # Inicializar GStreamer
 Gst.init(None)
@@ -63,48 +64,45 @@ def normalize_videos():
         time.sleep(10)  # Verifica nuevos videos cada 10 segundos
 
 def create_gstreamer_pipeline():
-    """Genera la tubería de GStreamer para transmitir múltiples videos en HLS con audio."""
+    """Genera la tubería de GStreamer para transmitir en HLS."""
+    global current_video_index
     if not video_queue:
         logging.warning("⚠️ No hay videos en la cola para transmitir.")
         return None
 
-    pipeline_str = """
-        concat name=concat_videos concat name=concat_audio
-    """
+    filename = video_queue[current_video_index]
+    uri = f"file://{os.path.abspath(os.path.join(NORMALIZE_DIR, filename))}"
     
-    for i, filename in enumerate(video_queue):
-        uri = f"file://{os.path.abspath(os.path.join(NORMALIZE_DIR, filename))}"
-        pipeline_str += f"""
-            uridecodebin uri="{uri}" name=src{i} 
-            src{i}. ! queue ! videoconvert ! videoscale ! videorate ! capsfilter caps=video/x-raw,framerate=30/1 ! concat_videos.
-            src{i}. ! queue ! audioconvert ! audioresample ! avenc_aac bitrate=128000 ! concat_audio.
-        """
-
-    pipeline_str += f"""
-        concat_videos. ! videoconvert ! x264enc bitrate=2000 ! queue ! mux.
-        concat_audio. ! queue ! mux.
+    pipeline_str = f"""
+        uridecodebin uri="{uri}" name=src 
+        src. ! queue ! videoconvert ! videoscale ! videorate ! capsfilter caps=video/x-raw,framerate=30/1 ! x264enc bitrate=2000 ! queue ! mux.
+        src. ! queue ! audioconvert ! audioresample ! avenc_aac bitrate=128000 ! queue ! mux.
         mpegtsmux name=mux ! hlssink \
         playlist-location={HLS_OUTPUT_DIR}/cuaima-tv.m3u8 \
         location={HLS_OUTPUT_DIR}/segment_%05d.ts \
         target-duration={SEGMENT_DURATION} max-files={PLAYLIST_LENGTH}
     """
 
-    logging.info(f"🎥 Pipeline generado:\n{pipeline_str}")
+    logging.info(f"🎥 Pipeline generado:
+{pipeline_str}")
     return Gst.parse_launch(pipeline_str)
 
 def bus_call(bus, message, loop):
-    """Maneja los mensajes del bus de GStreamer y reinicia la transmisión si hay un error."""
+    """Maneja los mensajes del bus de GStreamer y cambia al siguiente video en la cola."""
+    global current_video_index
     if message.type == Gst.MessageType.ERROR:
         err, debug = message.parse_error()
         logging.error(f"⚠️ Error en la transmisión: {err}, Debug: {debug}")
         loop.quit()
     elif message.type == Gst.MessageType.EOS:
-        logging.info("🎬 Fin de la transmisión. Reiniciando...")
+        logging.info("🎬 Fin del video. Cargando el siguiente...")
+        current_video_index = (current_video_index + 1) % len(video_queue)
         loop.quit()
     return True
 
 def stream_videos():
     """Inicia el pipeline de GStreamer y maneja errores."""
+    global current_video_index
     while True:
         if not video_queue:
             logging.info("⚠️ No hay videos listos para transmitir. Esperando...")
@@ -129,8 +127,8 @@ def stream_videos():
             break
         finally:
             pipeline.set_state(Gst.State.NULL)
-            logging.info("🔄 Reiniciando la transmisión en 5 segundos...")
-            time.sleep(2)
+            logging.info("🔄 Cargando el siguiente video en 5 segundos...")
+            time.sleep(5)
 
 @app.route("/api/start", methods=["GET"])
 def start_stream():
