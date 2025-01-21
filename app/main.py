@@ -28,17 +28,18 @@ os.makedirs(NORMALIZE_DIR, exist_ok=True)
 os.makedirs(HLS_OUTPUT_DIR, exist_ok=True)
 
 video_queue = []  # Cola de videos normalizados
+processed_videos = set()  # Videos ya agregados al HLS
 current_video_index = 0  # Índice del video en reproducción
 
 # Inicializar GStreamer
 Gst.init(None)
+
 
 def is_valid_mp4(file_path):
     """
     Verifica si un archivo MP4 es válido y está codificado en H.264 y AAC.
     """
     try:
-        # Ejecutar ffprobe para obtener información del archivo
         result = subprocess.run(
             [
                 "ffprobe",
@@ -52,14 +53,11 @@ def is_valid_mp4(file_path):
             stderr=subprocess.PIPE,
             text=True,
         )
-        
-        # Obtener el códec del video
         video_codec = result.stdout.strip()
         if video_codec != "h264":
             logging.warning(f"⚠️ El archivo {file_path} no está codificado en H.264 (códec: {video_codec})")
             return False
 
-        # Verificar el códec de audio
         result = subprocess.run(
             [
                 "ffprobe",
@@ -73,23 +71,24 @@ def is_valid_mp4(file_path):
             stderr=subprocess.PIPE,
             text=True,
         )
-
         audio_codec = result.stdout.strip()
         if audio_codec != "aac":
             logging.warning(f"⚠️ El archivo {file_path} no tiene audio codificado en AAC (códec: {audio_codec})")
             return False
 
-        # Si ambos códecs son válidos
         return True
     except Exception as e:
         logging.error(f"❌ Error verificando {file_path} con ffprobe: {e}")
         return False
+
+
 def preprocess_video(input_path, output_path):
     """Verifica si el video es válido y lo copia sin recodificar."""
     if is_valid_mp4(input_path):
-        os.system(f"cp '{input_path}' '{output_path}'")  # Copia sin modificar
+        os.system(f"cp '{input_path}' '{output_path}'")
         return True
     return False
+
 
 def normalize_videos():
     """Hilo en segundo plano para normalizar videos automáticamente."""
@@ -101,7 +100,7 @@ def normalize_videos():
             filename_normal = re.sub(r'\s+', '', filename)
             normalized_path = os.path.join(NORMALIZE_DIR, filename_normal)
 
-            if not os.path.exists(normalized_path):
+            if filename_normal not in video_queue and filename_normal not in processed_videos:
                 logging.info(f"Normalizando video: {filename_normal}")
                 success = preprocess_video(video, normalized_path)
                 if success:
@@ -110,7 +109,8 @@ def normalize_videos():
                 else:
                     logging.warning(f"⚠️ Error al normalizar {filename_normal}")
 
-        time.sleep(10)  # Verifica nuevos videos cada 10 segundos
+        time.sleep(10)
+
 
 def create_gstreamer_pipeline():
     """Genera la tubería de GStreamer para transmitir en HLS."""
@@ -132,22 +132,31 @@ def create_gstreamer_pipeline():
         target-duration={SEGMENT_DURATION} \
         max-files=0 append=true
     """
-
     logging.info(f"🎥 Pipeline generado:\n{pipeline_str}")
     return Gst.parse_launch(pipeline_str)
 
+
 def bus_call(bus, message, loop):
-    """Maneja los mensajes del bus de GStreamer y cambia al siguiente video en la cola."""
+    """Maneja los mensajes del bus de GStreamer y reinicia desde el segmento 0 si es necesario."""
     global current_video_index
     if message.type == Gst.MessageType.ERROR:
         err, debug = message.parse_error()
         logging.error(f"⚠️ Error en la transmisión: {err}, Debug: {debug}")
         loop.quit()
     elif message.type == Gst.MessageType.EOS:
-        logging.info("🎬 Fin del video. Cargando el siguiente...")
-        current_video_index = (current_video_index + 1) % len(video_queue)
+        logging.info("🎬 Fin del video. Marcando como procesado.")
+        processed_videos.add(video_queue[current_video_index])  # Marcar como procesado
+
+        # Avanzar al siguiente video o reiniciar desde el primero
+        if current_video_index + 1 < len(video_queue):
+            current_video_index += 1  # Siguiente video
+        else:
+            logging.info("🔄 Todos los videos han sido reproducidos. Reiniciando desde el primer segmento.")
+            current_video_index = 0  # Reiniciar desde el primer video
+
         loop.quit()
     return True
+
 
 def stream_videos():
     """Inicia el pipeline de GStreamer y maneja errores."""
@@ -176,8 +185,9 @@ def stream_videos():
             break
         finally:
             pipeline.set_state(Gst.State.NULL)
-            logging.info("🔄 Cargando el siguiente video en 5 segundos...")
+            logging.info("🔄 Reiniciando transmisión en 5 segundos...")
             time.sleep(5)
+
 
 @app.route("/api/start", methods=["GET"])
 def start_stream():
@@ -186,10 +196,12 @@ def start_stream():
     threading.Thread(target=stream_videos, daemon=True).start()
     return jsonify({"message": "Streaming iniciado."})
 
+
 @app.route("/api/videos", methods=["GET"])
 def list_videos():
     """Devuelve la lista de videos normalizados disponibles para la transmisión."""
     return jsonify({"normalized_videos": video_queue})
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
