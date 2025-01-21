@@ -5,6 +5,7 @@ import logging
 import re
 from flask import Flask, jsonify
 import gi
+import subprocess
 
 gi.require_version("Gst", "1.0")
 from gi.repository import Gst, GLib
@@ -20,7 +21,8 @@ NORMALIZE_DIR = "./videos/normalize"
 
 # Configuración HLS
 SEGMENT_DURATION = 5  # Duración de cada segmento HLS (en segundos)
-PLAYLIST_LENGTH = 20  # Número de segmentos en la lista de reproducción
+VIDEO_PLAYLIST = "cuaima-tv.m3u8"
+SEGMENT_PATTERN = "segment_%05d.ts"
 
 os.makedirs(NORMALIZE_DIR, exist_ok=True)
 os.makedirs(HLS_OUTPUT_DIR, exist_ok=True)
@@ -32,9 +34,56 @@ current_video_index = 0  # Índice del video en reproducción
 Gst.init(None)
 
 def is_valid_mp4(file_path):
-    """Verifica si un archivo MP4 tiene códec H.264."""
-    return file_path.endswith(".mp4")
+    """
+    Verifica si un archivo MP4 es válido y está codificado en H.264 y AAC.
+    """
+    try:
+        # Ejecutar ffprobe para obtener información del archivo
+        result = subprocess.run(
+            [
+                "ffprobe",
+                "-v", "error",
+                "-select_streams", "v:0",
+                "-show_entries", "stream=codec_name",
+                "-of", "default=noprint_wrappers=1:nokey=1",
+                file_path,
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        
+        # Obtener el códec del video
+        video_codec = result.stdout.strip()
+        if video_codec != "h264":
+            logging.warning(f"⚠️ El archivo {file_path} no está codificado en H.264 (códec: {video_codec})")
+            return False
 
+        # Verificar el códec de audio
+        result = subprocess.run(
+            [
+                "ffprobe",
+                "-v", "error",
+                "-select_streams", "a:0",
+                "-show_entries", "stream=codec_name",
+                "-of", "default=noprint_wrappers=1:nokey=1",
+                file_path,
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+
+        audio_codec = result.stdout.strip()
+        if audio_codec != "aac":
+            logging.warning(f"⚠️ El archivo {file_path} no tiene audio codificado en AAC (códec: {audio_codec})")
+            return False
+
+        # Si ambos códecs son válidos
+        return True
+    except Exception as e:
+        logging.error(f"❌ Error verificando {file_path} con ffprobe: {e}")
+        return False
 def preprocess_video(input_path, output_path):
     """Verifica si el video es válido y lo copia sin recodificar."""
     if is_valid_mp4(input_path):
@@ -49,17 +98,17 @@ def normalize_videos():
 
         for video in raw_videos:
             filename = os.path.basename(video)
-            filenameNormal = re.sub(r'\s+', '', filename)
-            normalized_path = os.path.join(NORMALIZE_DIR, filenameNormal)
+            filename_normal = re.sub(r'\s+', '', filename)
+            normalized_path = os.path.join(NORMALIZE_DIR, filename_normal)
 
             if not os.path.exists(normalized_path):
-                logging.info(f"Normalizando video: {filenameNormal}")
+                logging.info(f"Normalizando video: {filename_normal}")
                 success = preprocess_video(video, normalized_path)
                 if success:
-                    video_queue.append(filenameNormal)
-                    logging.info(f"✅ Video normalizado: {filenameNormal}")
+                    video_queue.append(filename_normal)
+                    logging.info(f"✅ Video normalizado: {filename_normal}")
                 else:
-                    logging.warning(f"⚠️ Error al normalizar {filenameNormal}")
+                    logging.warning(f"⚠️ Error al normalizar {filename_normal}")
 
         time.sleep(10)  # Verifica nuevos videos cada 10 segundos
 
@@ -72,19 +121,19 @@ def create_gstreamer_pipeline():
 
     filename = video_queue[current_video_index]
     uri = f"file://{os.path.abspath(os.path.join(NORMALIZE_DIR, filename))}"
-    
+
     pipeline_str = f"""
-        uridecodebin uri="{uri}" name=src 
-        src. ! queue ! videoconvert ! videoscale ! videorate ! capsfilter caps=video/x-raw,framerate=30/1 ! x264enc bitrate=2000 ! queue ! mux.
-        src. ! queue ! audioconvert ! audioresample ! avenc_aac bitrate=128000 ! queue ! mux.
+        uridecodebin uri="{uri}" name=src \
+        src. ! queue ! videoconvert ! videoscale ! videorate ! capsfilter caps=video/x-raw,framerate=30/1 ! x264enc bitrate=2000 ! queue ! mux. \
+        src. ! queue ! audioconvert ! audioresample ! avenc_aac bitrate=128000 ! queue ! mux. \
         mpegtsmux name=mux ! hlssink \
-        playlist-location={HLS_OUTPUT_DIR}/cuaima-tv.m3u8 \
-        location={HLS_OUTPUT_DIR}/segment_%05d.ts \
-        target-duration={SEGMENT_DURATION} max-files={PLAYLIST_LENGTH}
+        playlist-location={HLS_OUTPUT_DIR}/{VIDEO_PLAYLIST} \
+        location={HLS_OUTPUT_DIR}/{SEGMENT_PATTERN} \
+        target-duration={SEGMENT_DURATION} \
+        max-files=0 append=true
     """
 
-    logging.info(f"🎥 Pipeline generado:
-{pipeline_str}")
+    logging.info(f"🎥 Pipeline generado:\n{pipeline_str}")
     return Gst.parse_launch(pipeline_str)
 
 def bus_call(bus, message, loop):
