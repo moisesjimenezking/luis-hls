@@ -130,10 +130,12 @@ def create_gstreamer_pipeline():
         playlist-location={HLS_OUTPUT_DIR}/{VIDEO_PLAYLIST} \
         location={HLS_OUTPUT_DIR}/{SEGMENT_PATTERN} \
         target-duration={SEGMENT_DURATION} \
-        max-files=0 append=true
+        max-files=0
     """
+
     logging.info(f"🎥 Pipeline generado:\n{pipeline_str}")
     return Gst.parse_launch(pipeline_str)
+
 
 
 def bus_call(bus, message, loop):
