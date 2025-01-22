@@ -1,11 +1,21 @@
+from flask import (
+    Flask, 
+    jsonify, 
+    send_file, 
+    Response,
+    send_from_directory,
+    request
+)
+
+from gi.repository import Gst, GLib
 import os
 import threading
 import time
 import logging
 import re
-from flask import Flask, jsonify
 import gi
-from gi.repository import Gst, GLib
+import json
+import subprocess
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -27,6 +37,7 @@ os.makedirs(HLS_OUTPUT_DIR, exist_ok=True)
 video_queue = []  # Cola de videos normalizados
 current_video_index = 0  # Índice del video en reproducción
 all_segments = []  # Lista de todos los segmentos generados
+PUBLIC_DIR = "./public"
 
 # Inicializar GStreamer
 Gst.init(None)
@@ -171,6 +182,78 @@ def start_stream():
 def list_videos():
     """Devuelve la lista de videos normalizados disponibles para la transmisión."""
     return jsonify({"normalized_videos": video_queue})
+
+@app.route("/api/view_epg")
+def view_epg():
+    file_xlm = os.path.join(PUBLIC_DIR, "epg.xml")
+    """Devuelve el XML para verlo en el navegador."""
+    with open(file_xlm, "r", encoding="utf-8") as f:
+        xml_content = f.read()
+    return Response(xml_content, mimetype="application/xml")
+
+@app.route("/api/download_epg")
+def download_epg():
+    file_xlm = os.path.join(PUBLIC_DIR, "epg.xml")
+    """Permite descargar el archivo XML."""
+    return send_file(file_xlm, as_attachment=True)
+
+@app.route("/api/preview", methods=["GET"])
+def preview_video():
+    """Devuelve los primeros 30 segundos del video especificado."""
+    video_name = request.args.get("name")
+    
+    if not video_name:
+        return jsonify({"error": "Debe proporcionar el nombre del video."}), 400
+
+    video_path = os.path.join(VIDEOS_DIR, video_name)
+
+    if not os.path.exists(video_path):
+        return jsonify({"error": "El archivo no existe."}), 404
+
+    # Comando FFmpeg para extraer los primeros 30 segundos del video
+    try:
+        preview_path = os.path.join(HLS_OUTPUT_DIR, f"preview_{video_name}")
+
+        if not os.path.exists(preview_path):  # Evita regenerar la vista previa si ya existe
+            cmd = [
+                "ffmpeg", "-i", video_path, "-t", "30", "-c:v", "libx264",
+                "-preset", "ultrafast", "-c:a", "aac", "-b:a", "128k", preview_path, "-y"
+            ]
+            subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except:
+        return jsonify({"error": "El archivo no puede ser formateado."}), 404 
+    
+    return send_from_directory(HLS_OUTPUT_DIR, f"preview_{video_name}")
+
+
+@app.route("/api/json", methods=["GET"])
+def view_json():
+    json_file = os.path.join(PUBLIC_DIR, "cuaimaTeam.json")
+    """Devuelve el contenido del JSON en la respuesta (visualización en navegador)."""
+    if not os.path.exists(json_file):
+        return jsonify({"error": "El archivo JSON no existe"}), 404
+
+    with open(json_file, "r", encoding="utf-8") as f:
+        json_content = json.load(f)  # 🔹 Convertir a diccionario
+        
+    result = dict()
+
+    for secuencia, lista_videos in json_content.items():  # 🔹 Recorrer correctamente
+
+        if isinstance(lista_videos, list):  # 🔹 Verifica que sea una lista
+            result[secuencia] = []  # Crear una nueva lista en el resultado
+
+            for obj in lista_videos:
+                if "file" in obj:  # 🔹 Verifica que "file" exista en el objeto
+                    if ".MP4" not in obj["file"].upper():
+                        obj["file"] = f"{obj['file']}.MP4"
+
+                    obj["file"] = f"https://cuaimateam.online/api/preview?name={obj['file'].replace('MP4', 'mp4')}"
+
+                result[secuencia].append(obj)
+                
+        
+    return jsonify({"data": result})
 
 
 if __name__ == "__main__":
