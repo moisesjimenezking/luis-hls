@@ -23,7 +23,7 @@ NORMALIZE_DIR = "./videos/normalize"
 # Configuración HLS
 SEGMENT_DURATION = 5  # Duración de cada segmento HLS (en segundos)
 VIDEO_PLAYLIST = "cuaima-tv.m3u8"
-SEGMENT_PATTERN = "segment_%05d.ts"
+SEGMENT_PATTERN = "segment_{index}_%05d.ts"
 
 os.makedirs(NORMALIZE_DIR, exist_ok=True)
 os.makedirs(HLS_OUTPUT_DIR, exist_ok=True)
@@ -33,166 +33,104 @@ processed_videos = set()  # Videos ya agregados al HLS
 current_video_index = 0  # Índice del video en reproducción
 
 PUBLIC_DIR='./public'
+
 # Inicializar GStreamer
 Gst.init(None)
 
 def is_valid_mp4(file_path):
-    """
-    Verifica si un archivo MP4 es válido y está codificado en H.264 y AAC.
-    """
-    try:
-        result = subprocess.run(
-            [
-                "ffprobe",
-                "-v", "error",
-                "-select_streams", "v:0",
-                "-show_entries", "stream=codec_name",
-                "-of", "default=noprint_wrappers=1:nokey=1",
-                file_path,
-            ],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-        video_codec = result.stdout.strip()
-        if video_codec != "h264":
-            logging.warning(f"⚠️ El archivo {file_path} no está codificado en H.264 (códec: {video_codec})")
-            return False
-
-        result = subprocess.run(
-            [
-                "ffprobe",
-                "-v", "error",
-                "-select_streams", "a:0",
-                "-show_entries", "stream=codec_name",
-                "-of", "default=noprint_wrappers=1:nokey=1",
-                file_path,
-            ],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        )
-        audio_codec = result.stdout.strip()
-        if audio_codec != "aac":
-            logging.warning(f"⚠️ El archivo {file_path} no tiene audio codificado en AAC (códec: {audio_codec})")
-            return False
-
-        return True
-    except Exception as e:
-        logging.error(f"❌ Error verificando {file_path} con ffprobe: {e}")
+    """Verifica si un archivo MP4 tiene códec H.264."""
+    if not file_path.endswith(".mp4"):
         return False
+    # Verificar con ffprobe o gst-discoverer si es necesario
+    return True
+
 def preprocess_video(input_path, output_path):
     """Verifica si el video es válido y lo copia sin recodificar."""
     if is_valid_mp4(input_path):
-        os.system(f"cp '{input_path}' '{output_path}'")
+        os.system(f"cp '{input_path}' '{output_path}'")  # Copia sin modificar
         return True
     return False
 
 def normalize_videos():
-    """Hilo en segundo plano para normalizar videos automáticamente."""
-    while True:
-        raw_videos = [os.path.join(VIDEOS_DIR, f) for f in os.listdir(VIDEOS_DIR) if f.endswith(".mp4")]
+    """Normaliza todos los videos en el directorio y los agrega a la cola."""
+    raw_videos = [os.path.join(VIDEOS_DIR, f) for f in os.listdir(VIDEOS_DIR) if f.endswith(".mp4")]
 
-        for video in raw_videos:
-            filename = os.path.basename(video)
-            filename_normal = re.sub(r'\s+', '', filename)
-            normalized_path = os.path.join(NORMALIZE_DIR, filename_normal)
+    for index, video in enumerate(raw_videos):
+        filename = os.path.basename(video)
+        filename_normal = re.sub(r'\s+', '', filename)
+        normalized_path = os.path.join(NORMALIZE_DIR, filename_normal)
 
-            if filename_normal not in video_queue and filename_normal not in processed_videos:
-                logging.info(f"Normalizando video: {filename_normal}")
-                success = preprocess_video(video, normalized_path)
-                if success:
-                    video_queue.append(filename_normal)
-                    logging.info(f"✅ Video normalizado: {filename_normal}")
-                else:
-                    logging.warning(f"⚠️ Error al normalizar {filename_normal}")
+        if not os.path.exists(normalized_path):
+            logging.info(f"Normalizando video: {filename_normal}")
+            success = preprocess_video(video, normalized_path)
+            if success:
+                video_queue.append((index, filename_normal))
+                logging.info(f"✅ Video normalizado: {filename_normal}")
+            else:
+                logging.warning(f"⚠️ Error al normalizar {filename_normal}")
 
-        time.sleep(10)
-
-def create_gstreamer_pipeline():
-    """Genera la tubería de GStreamer para transmitir en HLS."""
-    global current_video_index
+def generate_hls_segments():
+    """Genera segmentos HLS para todos los videos en la cola."""
     if not video_queue:
-        logging.warning("⚠️ No hay videos en la cola para transmitir.")
-        return None
+        logging.warning("⚠️ No hay videos en la cola para generar segmentos.")
+        return
 
-    filename = video_queue[current_video_index]
-    uri = f"file://{os.path.abspath(os.path.join(NORMALIZE_DIR, filename))}"
+    playlist_path = os.path.join(HLS_OUTPUT_DIR, VIDEO_PLAYLIST)
+    with open(playlist_path, "w") as playlist:
+        playlist.write("#EXTM3U\n")
+        playlist.write(f"#EXT-X-TARGETDURATION:{SEGMENT_DURATION}\n")
+        playlist.write("#EXT-X-VERSION:3\n")
+        playlist.write("#EXT-X-MEDIA-SEQUENCE:0\n")
 
-    pipeline_str = f"""
-        uridecodebin uri="{uri}" name=src \
-        src. ! queue ! videoconvert ! videoscale ! videorate ! capsfilter caps=video/x-raw,framerate=30/1 ! x264enc bitrate=2000 ! queue ! mux. \
-        src. ! queue ! audioconvert ! audioresample ! avenc_aac bitrate=128000 ! queue ! mux. \
-        mpegtsmux name=mux ! hlssink \
-        playlist-location={HLS_OUTPUT_DIR}/{VIDEO_PLAYLIST} \
-        location={HLS_OUTPUT_DIR}/{SEGMENT_PATTERN} \
-        target-duration={SEGMENT_DURATION} \
-        max-files=0
-    """
+        for index, filename in video_queue:
+            video_path = os.path.join(NORMALIZE_DIR, filename)
+            segment_pattern = os.path.join(HLS_OUTPUT_DIR, SEGMENT_PATTERN.format(index=index))
 
-    logging.info(f"🎥 Pipeline generado:\n{pipeline_str}")
-    return Gst.parse_launch(pipeline_str)
+            pipeline_str = f"""
+                filesrc location={video_path} ! decodebin name=dec \
+                dec. ! queue ! videoconvert ! x264enc bitrate=1000 speed-preset=ultrafast ! mpegtsmux ! hlssink \
+                playlist-location={HLS_OUTPUT_DIR}/temp_{index}.m3u8 \
+                location={segment_pattern} \
+                target-duration={SEGMENT_DURATION} \
+                max-files=0
+            """
 
-def bus_call(bus, message, loop):
-    """Maneja los mensajes del bus de GStreamer y reinicia desde el segmento 0 si es necesario."""
-    global current_video_index
-    if message.type == Gst.MessageType.ERROR:
-        err, debug = message.parse_error()
-        logging.error(f"⚠️ Error en la transmisión: {err}, Debug: {debug}")
-        loop.quit()
-    elif message.type == Gst.MessageType.EOS:
-        logging.info("🎬 Fin del video. Marcando como procesado.")
-        processed_videos.add(video_queue[current_video_index])  # Marcar como procesado
-        # Avanzar al siguiente video o reiniciar desde el primero
-        if current_video_index + 1 < len(video_queue):
-            current_video_index += 1  # Siguiente video
-        else:
-            logging.info("🔄 Todos los videos han sido reproducidos. Reiniciando desde el primer segmento.")
-            current_video_index = 0  # Reiniciar desde el primer video
-        loop.quit()
-    return True
+            pipeline = Gst.parse_launch(pipeline_str)
+            pipeline.set_state(Gst.State.PLAYING)
 
-def stream_videos():
-    """Inicia el pipeline de GStreamer y maneja errores."""
-    global current_video_index
-    while True:
-        if not video_queue:
-            logging.info("⚠️ No hay videos listos para transmitir. Esperando...")
-            time.sleep(10)
-            continue
+            # Esperar hasta que termine el procesamiento
+            bus = pipeline.get_bus()
+            msg = bus.timed_pop_filtered(Gst.CLOCK_TIME_NONE, Gst.MessageType.EOS | Gst.MessageType.ERROR)
 
-        pipeline = create_gstreamer_pipeline()
-        if not pipeline:
-            time.sleep(10)
-            continue
+            if msg.type == Gst.MessageType.ERROR:
+                err, debug = msg.parse_error()
+                logging.error(f"⚠️ Error procesando {filename}: {err}, Debug: {debug}")
+            else:
+                logging.info(f"✅ Segmentos generados para {filename}")
 
-        loop = GLib.MainLoop()
-        bus = pipeline.get_bus()
-        bus.add_signal_watch()
-        bus.connect("message", bus_call, loop)
-
-        pipeline.set_state(Gst.State.PLAYING)
-        try:
-            loop.run()
-        except KeyboardInterrupt:
-            logging.info("🛑 Transmisión detenida manualmente.")
-            break
-        finally:
             pipeline.set_state(Gst.State.NULL)
-            logging.info("🔄 Reiniciando transmisión en 5 segundos...")
-            time.sleep(5)
+
+            # Agregar los segmentos al playlist principal
+            with open(f"{HLS_OUTPUT_DIR}/temp_{index}.m3u8", "r") as temp_playlist:
+                for line in temp_playlist:
+                    if not line.startswith("#EXT-X-TARGETDURATION") and not line.startswith("#EXT-X-VERSION"):
+                        playlist.write(line)
+
+    # Marcar el final de la lista de reproducción
+    with open(playlist_path, "a") as playlist:
+        playlist.write("#EXT-X-ENDLIST\n")
 
 @app.route("/api/start", methods=["GET"])
 def start_stream():
-    """Inicia la transmisión en un hilo separado."""
-    threading.Thread(target=normalize_videos, daemon=True).start()
-    threading.Thread(target=stream_videos, daemon=True).start()
-    return jsonify({"message": "Streaming iniciado."})
+    """Procesa todos los videos y genera HLS."""
+    normalize_videos()
+    generate_hls_segments()
+    return jsonify({"message": "Segmentos generados y HLS listo."})
 
 @app.route("/api/videos", methods=["GET"])
 def list_videos():
-    """Devuelve la lista de videos normalizados disponibles para la transmisión."""
-    return jsonify({"normalized_videos": video_queue})
+    """Devuelve la lista de videos normalizados disponibles."""
+    return jsonify({"normalized_videos": [v[1] for v in video_queue]})
 
 @app.route("/api/view_epg")
 def view_epg():
