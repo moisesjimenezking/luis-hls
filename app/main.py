@@ -38,11 +38,50 @@ PUBLIC_DIR='./public'
 Gst.init(None)
 
 def is_valid_mp4(file_path):
-    """Verifica si un archivo MP4 tiene códec H.264."""
-    if not file_path.endswith(".mp4"):
+    """
+    Verifica si un archivo MP4 es válido y está codificado en H.264 y AAC.
+    """
+    try:
+        result = subprocess.run(
+            [
+                "ffprobe",
+                "-v", "error",
+                "-select_streams", "v:0",
+                "-show_entries", "stream=codec_name",
+                "-of", "default=noprint_wrappers=1:nokey=1",
+                file_path,
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        video_codec = result.stdout.strip()
+        if video_codec != "h264":
+            logging.warning(f"⚠️ El archivo {file_path} no está codificado en H.264 (códec: {video_codec})")
+            return False
+
+        result = subprocess.run(
+            [
+                "ffprobe",
+                "-v", "error",
+                "-select_streams", "a:0",
+                "-show_entries", "stream=codec_name",
+                "-of", "default=noprint_wrappers=1:nokey=1",
+                file_path,
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        audio_codec = result.stdout.strip()
+        if audio_codec != "aac":
+            logging.warning(f"⚠️ El archivo {file_path} no tiene audio codificado en AAC (códec: {audio_codec})")
+            return False
+
+        return True
+    except Exception as e:
+        logging.error(f"❌ Error verificando {file_path} con ffprobe: {e}")
         return False
-    # Verificar con ffprobe o gst-discoverer si es necesario
-    return True
 
 def preprocess_video(input_path, output_path):
     """Verifica si el video es válido y lo copia sin recodificar."""
