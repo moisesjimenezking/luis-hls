@@ -39,10 +39,52 @@ current_video_index = 0  # Índice del video en reproducción
 all_segments = []  # Lista de todos los segmentos generados
 PUBLIC_DIR = "./public"
 
+AD_INTERVAL = 480  # Intervalo de inserción de anuncios (8 minutos)
+AD_VIDEO = "ad.mp4"  # Ruta al video de publicidad
+AD_SCTE35_MARKER = "#EXT-SCTE35:/DYNAMIC/PLACEMENT\n"  # Ejemplo de marcador SCTE-35
+
+
 # Inicializar GStreamer
 Gst.init(None)
 
 
+def create_gstreamer_pipeline_for_ad(ad_path):
+    """Crea un pipeline para reproducir el anuncio publicitario."""
+    uri = f"file://{os.path.abspath(ad_path)}"
+    segment_path = os.path.join(HLS_OUTPUT_DIR, SEGMENT_PATTERN)
+
+    pipeline_str = f"""
+        uridecodebin uri="{uri}" name=src \
+        src. ! queue ! videoconvert ! videoscale ! videorate ! capsfilter caps=video/x-raw,framerate=30/1 ! x264enc bitrate=2000 ! queue ! mux. \
+        src. ! queue ! audioconvert ! audioresample ! avenc_aac bitrate=128000 ! queue ! mux. \
+        mpegtsmux name=mux ! hlssink \
+        playlist-location={os.path.join(HLS_OUTPUT_DIR, VIDEO_PLAYLIST)} \
+        location={segment_path} \
+        target-duration={SEGMENT_DURATION} \
+        max-files=0
+    """
+    return Gst.parse_launch(pipeline_str)
+
+
+def insert_advertisement(pipeline, loop):
+    """Inserta un video publicitario y agrega un marcador SCTE-35 en la lista."""
+    global all_segments
+
+    ad_path = os.path.join(PUBLIC_DIR, AD_VIDEO)
+    if not os.path.exists(ad_path):
+        logging.error("⚠️ No se encontró el video de publicidad.")
+        return
+
+    pipeline.set_state(Gst.State.NULL)
+    ad_pipeline = create_gstreamer_pipeline_for_ad(ad_path)
+    ad_pipeline.set_state(Gst.State.PLAYING)
+    time.sleep(120)
+    ad_pipeline.set_state(Gst.State.NULL)
+
+    all_segments.append(AD_SCTE35_MARKER)
+    regenerate_playlist()
+    loop.quit()
+    
 def is_valid_mp4(file_path):
     """Verifica si un archivo MP4 es válido y está codificado en H.264 y AAC."""
     return file_path.endswith(".mp4")
@@ -136,6 +178,8 @@ def regenerate_playlist():
 def stream_videos():
     """Inicia el pipeline de GStreamer y maneja errores."""
     global current_video_index, all_segments
+    last_ad_time = time.time()
+
     while True:
         if not video_queue:
             logging.info("⚠️ No hay videos listos para transmitir. Esperando...")
@@ -153,8 +197,16 @@ def stream_videos():
         bus.connect("message", bus_call, loop)
 
         pipeline.set_state(Gst.State.PLAYING)
+        
         try:
-            loop.run()
+            while True:
+                if time.time() - last_ad_time >= AD_INTERVAL:
+                    insert_advertisement(pipeline, loop)
+                    last_ad_time = time.time()
+                if not loop.is_running():
+                    break
+                
+                loop.run()
         except KeyboardInterrupt:
             logging.info("🛑 Transmisión detenida manualmente.")
             break
