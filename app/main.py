@@ -3,9 +3,10 @@ import threading
 import time
 import logging
 import re
-from flask import Flask, jsonify, send_from_directory, Response, send_file, request
-import gi, json
+from flask import Flask, jsonify, Response, send_file, request, send_from_directory
+import gi
 import subprocess
+import json
 
 gi.require_version("Gst", "1.0")
 from gi.repository import Gst, GLib
@@ -31,10 +32,9 @@ video_queue = []  # Cola de videos normalizados
 processed_videos = set()  # Videos ya agregados al HLS
 current_video_index = 0  # Índice del video en reproducción
 
-PUBLIC_DIR = "./public"
+PUBLIC_DIR='./public'
 # Inicializar GStreamer
 Gst.init(None)
-
 
 def is_valid_mp4(file_path):
     """
@@ -81,15 +81,12 @@ def is_valid_mp4(file_path):
     except Exception as e:
         logging.error(f"❌ Error verificando {file_path} con ffprobe: {e}")
         return False
-
-
 def preprocess_video(input_path, output_path):
     """Verifica si el video es válido y lo copia sin recodificar."""
     if is_valid_mp4(input_path):
         os.system(f"cp '{input_path}' '{output_path}'")
         return True
     return False
-
 
 def normalize_videos():
     """Hilo en segundo plano para normalizar videos automáticamente."""
@@ -112,7 +109,6 @@ def normalize_videos():
 
         time.sleep(10)
 
-
 def create_gstreamer_pipeline():
     """Genera la tubería de GStreamer para transmitir en HLS."""
     global current_video_index
@@ -131,13 +127,10 @@ def create_gstreamer_pipeline():
         playlist-location={HLS_OUTPUT_DIR}/{VIDEO_PLAYLIST} \
         location={HLS_OUTPUT_DIR}/{SEGMENT_PATTERN} \
         target-duration={SEGMENT_DURATION} \
-        max-files=0
+        max-files=0 append=true
     """
-
     logging.info(f"🎥 Pipeline generado:\n{pipeline_str}")
     return Gst.parse_launch(pipeline_str)
-
-
 
 def bus_call(bus, message, loop):
     """Maneja los mensajes del bus de GStreamer y reinicia desde el segmento 0 si es necesario."""
@@ -149,17 +142,14 @@ def bus_call(bus, message, loop):
     elif message.type == Gst.MessageType.EOS:
         logging.info("🎬 Fin del video. Marcando como procesado.")
         processed_videos.add(video_queue[current_video_index])  # Marcar como procesado
-
         # Avanzar al siguiente video o reiniciar desde el primero
         if current_video_index + 1 < len(video_queue):
             current_video_index += 1  # Siguiente video
         else:
             logging.info("🔄 Todos los videos han sido reproducidos. Reiniciando desde el primer segmento.")
             current_video_index = 0  # Reiniciar desde el primer video
-
         loop.quit()
     return True
-
 
 def stream_videos():
     """Inicia el pipeline de GStreamer y maneja errores."""
@@ -191,14 +181,12 @@ def stream_videos():
             logging.info("🔄 Reiniciando transmisión en 5 segundos...")
             time.sleep(5)
 
-
 @app.route("/api/start", methods=["GET"])
 def start_stream():
     """Inicia la transmisión en un hilo separado."""
     threading.Thread(target=normalize_videos, daemon=True).start()
     threading.Thread(target=stream_videos, daemon=True).start()
     return jsonify({"message": "Streaming iniciado."})
-
 
 @app.route("/api/videos", methods=["GET"])
 def list_videos():
