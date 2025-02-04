@@ -8,7 +8,7 @@ services:
     network_mode: "host"
     user: "root"
     volumes:
-      - ./app/videos:/app/videos:rw 
+      - ./videos:/app/videos:rw 
       - ./app/hls:/app/hls_output  # Carpeta de salida HLS
       - ./app/public:/app/public  # Carpeta de salida HLS
     deploy:
