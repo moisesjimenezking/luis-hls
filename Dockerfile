@@ -33,6 +33,12 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r /app/requirements.txt && \
     pip install --no-cache-dir PyGObject
 
+    # Instalar tini
+RUN apt-get update && apt-get install -y tini
+
+# Usar tini como init system
+ENTRYPOINT ["/usr/bin/tini", "--"]
+
 # Exponer solo el puerto de Flask
 EXPOSE 5000
 
