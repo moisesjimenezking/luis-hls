@@ -91,9 +91,10 @@ def preprocess_video(input_path, output_path):
 
 
 def normalize_videos():
-    """Hilo en segundo plano para normalizar videos automáticamente."""
     while True:
+        logging.debug("🔍 Buscando videos para normalizar...")
         raw_videos = [os.path.join(VIDEOS_DIR, f) for f in os.listdir(VIDEOS_DIR) if f.endswith(".mp4")]
+        logging.debug(f"📂 Videos encontrados: {raw_videos}")
 
         for video in raw_videos:
             filename = os.path.basename(video)
@@ -101,15 +102,16 @@ def normalize_videos():
             normalized_path = os.path.join(NORMALIZE_DIR, filename_normal)
 
             if filename_normal not in video_queue and filename_normal not in processed_videos:
-                logging.info(f"Normalizando video: {filename_normal}")
+                logging.info(f"⚙️ Normalizando video: {filename_normal}")
                 success = preprocess_video(video, normalized_path)
                 if success:
                     video_queue.append(filename_normal)
-                    logging.info(f"✅ Video normalizado: {filename_normal}")
+                    logging.info(f"✅ Video normalizado y agregado a la cola: {filename_normal}")
                 else:
-                    logging.warning(f"⚠️ Error al normalizar {filename_normal}")
+                    logging.warning(f"❌ Falló la normalización de {filename_normal}")
 
         time.sleep(10)
+
 
 
 def create_gstreamer_pipeline():
@@ -194,8 +196,14 @@ def stream_videos():
 @app.route("/api/start", methods=["GET"])
 def start_stream():
     """Inicia la transmisión en un hilo separado."""
-    threading.Thread(target=normalize_videos, daemon=True).start()
-    threading.Thread(target=stream_videos, daemon=True).start()
+    logging.info("🚀 Iniciando normalización de videos...")
+    normalize_thread = threading.Thread(target=normalize_videos, daemon=True)
+    normalize_thread.start()
+
+    logging.info("📡 Iniciando transmisión de videos...")
+    stream_thread = threading.Thread(target=stream_videos, daemon=True)
+    stream_thread.start()
+
     return jsonify({"message": "Streaming iniciado."})
 
 
