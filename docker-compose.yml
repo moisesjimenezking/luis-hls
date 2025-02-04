@@ -8,6 +8,11 @@ services:
     network_mode: "host"
     user: "root"
     volumes:
-      - ./videos:/app/videos:rw 
+      - ./app/videos:/app/videos:rw 
       - ./app/hls:/app/hls_output  # Carpeta de salida HLS
       - ./app/public:/app/public  # Carpeta de salida HLS
+    deploy:
+      resources:
+        limits:
+          memory: "5GB"  # Limita a 5GB de RAM
+          cpus: "0.90"    # Limita al 90% de la CPU
